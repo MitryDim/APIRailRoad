@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const bcrypt = require('bcryptjs');
-
 const userSchema = new mongoose.Schema({
   pseudo: { type: String, required:true, trim: true },
   email: { type: String, required:true, unique: true  },
@@ -8,8 +7,6 @@ const userSchema = new mongoose.Schema({
   tokens: [{ type: Object }],
   role: {type:String, required:true, default: "normal"}
 });
-
-
 
 userSchema.methods.comparePassword = async function (password) {
 
@@ -59,36 +56,5 @@ userSchema.pre('save', function (next) {
     next();
   })
 });
-
-// userSchema.statics.validateInput = async function (user){
-//     const schema = Joi.object({ 
-//         pseudo: Joi.string()
-//                    .min(3)
-//                    .max(30)
-//                    .required(),                   
-//         email: Joi.string()
-//                   .email()
-//                   .min(5)
-//                   .max(255)
-//                   .required(),
-
-//         password: new PasswordComplexity({
-//           min: 6,
-//           max: 25,
-//           lowerCase: 1,
-//           upperCase: 1,
-//           numeric: 1,
-//           symbol: 1,
-//           requirementCount: 4
-//         }),
-
-//         role: Joi.string()
-//                  .valid('normal')
-//                  .valid('employee')
-//                  .valid('admin')
-//                  .optional()
-//     });
-//     const test =  schema.validate(user);
-// }
 
 module.exports = mongoose.model("User",userSchema);

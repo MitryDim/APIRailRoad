@@ -1,8 +1,7 @@
-const { findById } = require('../models/trainstationModelModel');
 require('dotenv').config();
 
 //Importing trainstation context
-const Trainstation = require("../models/trainstationModelModel");
+const Trainstation = require("../models/trainstationModel");
 
 //Create train station
 exports.createTrainstation = async (req, res) => {

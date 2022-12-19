@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const trainstationSchema = new mongoose.Schema({
-    name: { type: String, required:true, trim: true },
-    open_hour: { type: Date, required:true, unique: true  },
-    close_hour: { type: Date, required:true, unique: true  },
+    name: { type: String, required:true, trim: true, unique : true },
+    open_hour: { type: Date, required:true },
+    close_hour: { type: Date, required:true},
     images: [{ type: Object }],
 });
 

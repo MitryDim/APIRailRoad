@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const trainSchema = new mongoose.Schema({
-    name: { type: String, required:true, trim: true },
+    name: { type: String, required:true, trim: true, unique : true },
     start_station: { type: String, required:true },
     end_station: { type: String, required:true },
-    time_of_departure: { type: Date, required:true, unique: true },
+    time_of_departure: { type: Date, required:true },
 });
 
 trainSchema.statics.isThisNameInUse = async function (name) {

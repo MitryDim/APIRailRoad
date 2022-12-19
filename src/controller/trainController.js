@@ -1,4 +1,3 @@
-const { findById } = require('../models/trainModel');
 require('dotenv').config();
 
 // Importing train context
@@ -6,10 +5,6 @@ const Train = require("../models/trainModel");
 
 //Create train
 exports.createTrain = async (req, res) => {
-
-    //Control of the user's admin role
-    //
-    //
 
     const {name} = req.body;
     const isNewTrain = await Train.isThisTrainInUse(name);
@@ -21,7 +16,6 @@ exports.createTrain = async (req, res) => {
 
 
     //Update in the DB
-
     const trainInfo = {
         name: train.name,
         start_station: train.start_station,
@@ -35,10 +29,6 @@ exports.createTrain = async (req, res) => {
 
 //Update train
 exports.trainUpdate = async (req,res,next) => {
-
-    //Control of the user's admin role
-    //
-    //
 
     const { name } = req.body;
     const train = await Train.findById(req.user._id)

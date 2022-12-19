@@ -64,7 +64,7 @@ exports.validateInputLogin = (req,res,next) => {
 
 exports.validateInputUpdate = (req,res,next) => {
     const schema = Joi.object({
-        _id : Joi.objectId(),  
+        _id : Joi.objectId().optional(),  
 
         pseudo: Joi.string()
                    .min(3)

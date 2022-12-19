@@ -1,5 +1,7 @@
 const Joi = require('joi');
 const PasswordComplexity  = require("joi-password-complexity");
+Joi.objectId = require('joi-objectid')(Joi)
+ 
 
 exports.validateInputRegister = (req,res,next) => {
     const schema = Joi.object({ 
@@ -61,7 +63,9 @@ exports.validateInputLogin = (req,res,next) => {
 };
 
 exports.validateInputUpdate = (req,res,next) => {
-    const schema = Joi.object({                          
+    const schema = Joi.object({
+        _id : Joi.objectId(),  
+
         pseudo: Joi.string()
                    .min(3)
                    .max(30),
@@ -79,7 +83,12 @@ exports.validateInputUpdate = (req,res,next) => {
           numeric: 1,
           symbol: 1,
           requirementCount: 4
-        })
+        }),       
+        role: Joi.string()
+                 .valid('normal')
+                 .valid('employee')
+                 .valid('admin')
+                 .optional()
     });
     const {error} = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);  

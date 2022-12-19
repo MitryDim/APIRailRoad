@@ -1,11 +1,13 @@
 const jwt = require('jsonwebtoken');
 const { findById } = require('../models/userModel');
 const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose")
 
 require('dotenv').config();
 
 // importing user context
 const User = require("../models/userModel");
+const { func } = require('joi');
 
 //register
 exports.createUser = async (req, res) => {
@@ -70,19 +72,34 @@ exports.userLogIn = async (req, res) => {
 //Update
 
 exports.userUpdate = async (req,res,next) => {
-    const { email } = req.body;
-    const user = await User.findById(req.user._id)
+    const { email,role } = req.body
+    let id = req.body._id
+    let userId = req.user._id
 
+    console.log(userId)
+
+    if (id != undefined)
+    {
+        id = mongoose.Types.ObjectId(id)
+        console.log(id)
+        if ((id != req.user._id && req.user.role != "admin")) 
+            return res.status(403).send("You cannot update an account other than yourself")
+        else
+            userId = id
+    }
+
+    if (req.body.role != undefined && req.user.role != "admin")
+        return res.status(403).send("You don't have permissions for update this role.")
+
+
+    const user = await User.findById(userId)
     if (user.email != email)
     {
     const isNewEmail = await User.isThisEmailInUse(email);
     if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(user.password, salt);
-   
-    await User.findByIdAndUpdate(req.user._id, req.body)
+    await User.findByIdAndUpdate(userId, req.body)
     res.status(200).send("updated successfully!");
   
 
@@ -100,14 +117,24 @@ exports.userDelete = async (req,res) => {
             return res.status(403).send("You cannot delete an account other than yourself");
         }
     
-       await User.findByIdAndDelete(req.user._id, function (err, docs) {
+        await User.findByIdAndDelete(req.user._id).then(function (err, data)
+        {
             if (err){
-                console.log(err)
-            }
-            else{
-                console.log("Deleted : ", docs);
-            }
-        });
+                            console.log(err)
+                        }
+                        else{
+                            console.log("Deleted : ", docs);
+                        }
+        })
+
+    //    await User.findByIdAndDelete(req.user._id, function (err, docs) {
+    //         if (err){
+    //             console.log(err)
+    //         }
+    //         else{
+    //             console.log("Deleted : ", docs);
+    //         }
+    //     });
 
          res.status(200).send("account is now delete !");
 

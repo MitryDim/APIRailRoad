@@ -17,7 +17,7 @@ exports.createUser = async (req, res) => {
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
-    
+
     const user = await User(req.body, ["pseudo", "email", "password", "role"])
 
     await user.save();
@@ -52,7 +52,6 @@ exports.userLogIn = async (req, res) => {
         });
     }
 
-
     //Mise à jour en BDD
     await User.findByIdAndUpdate(user._id, {
         tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
@@ -65,7 +64,22 @@ exports.userLogIn = async (req, res) => {
 
     //retourne les informations user et token
     res.status(200).json({ user: userInfo, token })
+}
 
+exports.userProfil = async (req, res) => {
+    const { email } = req.query
+
+    if (req.user.email != email && req.user.role != "employee")
+        return res.status(403).send("you don't have permissions to view this profil")
+
+    const user = await User.findOne({ email })
+
+    const userInfo = {
+        pseudo: user.pseudo,
+        email: user.email
+    }
+
+    res.status(200).json(userInfo)
 }
 
 
@@ -90,18 +104,14 @@ exports.userUpdate = async (req, res, next) => {
     if (req.body.role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
 
-
     const user = await User.findById(userId)
     //check de l'email
     if (user.email != email) {
         const isNewEmail = await User.isThisEmailInUse(email);
         if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
-
     await User.findByIdAndUpdate(userId, req.body)
     res.status(200).send("updated successfully!");
-
-
 }
 
 

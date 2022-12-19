@@ -1,0 +1,14 @@
+const express = require("express");
+const {createTrainstation, trainstationUpdate, trainstationDelete} = require('../controller/trainstationController');
+const {validateInputCreate,validateInputUpdate} = require('../middleware/validation/trainstationValidation');
+const {isAdmin} = require("../middleware/admin");
+
+const router = express.Router();
+
+
+router.post('/create', isAdmin, validateInputCreate, createTrainstation);
+router.put('/update', isAdmin, validateInputUpdate, trainstationUpdate);
+router.delete('/delete', isAdmin, trainstationDelete);
+
+
+module.exports = router;

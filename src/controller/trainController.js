@@ -31,7 +31,7 @@ exports.createTrain = async (req, res) => {
 exports.trainUpdate = async (req,res,next) => {
 
     const { name } = req.body;
-    const train = await Train.findById(req.user._id)
+    const train = await Train.findOne({name})
 
     if (train.name != name)
     {
@@ -42,13 +42,13 @@ exports.trainUpdate = async (req,res,next) => {
     if (train.start_station != startStation)
     {
         const isNewStartStation = await Train.isThisStartStationInUse(startStation);
-        if (!isNewStartStation) return res.status(409).send("Start station is identical, please enter a new Start station.");
+        if (!isNewStartStation) return res.status(409).send("Start station not exist, please enter an existing start station.");
     }
 
     if(train.end_station != endStation)
     {
         const isNewEndStation = await Train.isThisEndStationInUse(endStation);
-        if (!isNewEndStation) return res.status(409).send("End station is identical, please enter a new End station.")
+        if (!isNewEndStation) return res.status(409).send("End station not exist, please enter an existing end station.")
     }
 
     if(train.time_of_departure != timeOfDeparture)

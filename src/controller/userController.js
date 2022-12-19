@@ -13,11 +13,11 @@ const { func } = require('joi');
 exports.createUser = async (req, res) => {
 
     const { email } = req.body;
-
+    // check de l'email
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
-
+    
     const user = await User(req.body, ["pseudo", "email", "password", "role"])
 
     await user.save();
@@ -70,14 +70,13 @@ exports.userLogIn = async (req, res) => {
 
 
 //Update
-
 exports.userUpdate = async (req, res, next) => {
     const { email, role } = req.body
+
     let id = req.body._id
     let userId = req.user._id
 
-    console.log(userId)
-
+    //verification si ID passé en paramètre dans le body
     if (id != undefined) {
         id = mongoose.Types.ObjectId(id)
         console.log(id)
@@ -87,11 +86,13 @@ exports.userUpdate = async (req, res, next) => {
             userId = id
     }
 
+    //verification si un rôle est passé en paramètre
     if (req.body.role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
 
 
     const user = await User.findById(userId)
+    //check de l'email
     if (user.email != email) {
         const isNewEmail = await User.isThisEmailInUse(email);
         if (!isNewEmail) return res.status(409).send("email Already Exist.");

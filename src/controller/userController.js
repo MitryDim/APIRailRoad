@@ -71,18 +71,17 @@ exports.userLogIn = async (req, res) => {
 
 //Update
 
-exports.userUpdate = async (req,res,next) => {
-    const { email,role } = req.body
+exports.userUpdate = async (req, res, next) => {
+    const { email, role } = req.body
     let id = req.body._id
     let userId = req.user._id
 
     console.log(userId)
 
-    if (id != undefined)
-    {
+    if (id != undefined) {
         id = mongoose.Types.ObjectId(id)
         console.log(id)
-        if ((id != req.user._id && req.user.role != "admin")) 
+        if ((id != req.user._id && req.user.role != "admin"))
             return res.status(403).send("You cannot update an account other than yourself")
         else
             userId = id
@@ -93,56 +92,40 @@ exports.userUpdate = async (req,res,next) => {
 
 
     const user = await User.findById(userId)
-    if (user.email != email)
-    {
-    const isNewEmail = await User.isThisEmailInUse(email);
-    if (!isNewEmail) return res.status(409).send("email Already Exist.");
+    if (user.email != email) {
+        const isNewEmail = await User.isThisEmailInUse(email);
+        if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
 
     await User.findByIdAndUpdate(userId, req.body)
     res.status(200).send("updated successfully!");
-  
+
 
 }
 
 
-exports.userDelete = async (req,res) => {
-
-    const  { email } = req.query;
+exports.userDelete = async (req, res) => {
+    const { email } = req.query;
     console.log(email)
     if (email != undefined) {
         const user = await User.findById(req.user._id)
-        if (user.email != email)
-        {
+        if (user.email != email) {
             return res.status(403).send("You cannot delete an account other than yourself");
         }
-    
-        await User.findByIdAndDelete(req.user._id).then(function (err, data)
-        {
-            if (err){
-                            console.log(err)
-                        }
-                        else{
-                            console.log("Deleted : ", docs);
-                        }
+
+        await User.findByIdAndDelete(req.user._id).then(function (err, data) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("Deleted : ", docs);
+            }
         })
-
-    //    await User.findByIdAndDelete(req.user._id, function (err, docs) {
-    //         if (err){
-    //             console.log(err)
-    //         }
-    //         else{
-    //             console.log("Deleted : ", docs);
-    //         }
-    //     });
-
-         res.status(200).send("account is now delete !");
-
+        res.status(200).send("account is now delete !");
     }
     else {
         return res.status(400).send("please put an email");
     }
-   
 }
 
 //Logout

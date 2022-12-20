@@ -3,14 +3,14 @@ const trainSchema = new mongoose.Schema({
     name: { type: String, required:true, trim: true, unique : true },
     start_station: { type: String, required:true },
     end_station: { type: String, required:true },
-    time_of_departure: { type: Date, required:true },
+    time_of_departure: { type: String, required:true },
 });
 
 trainSchema.statics.isThisNameInUse = async function (name) {
     if (!name) throw new Error('Invalid name');
     try {
-        const user = await this.findOne({name});
-        if (name) return false;
+        const nameTrain = await this.findOne({name});
+        if (nameTrain) return false;
 
         return true;
     } catch (error) {

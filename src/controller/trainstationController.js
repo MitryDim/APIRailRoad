@@ -11,14 +11,12 @@ exports.createTrainstation = async (req, res) => {
     //
 
     const {name} = req.body;
-    const isNewTrainstation = await Trainstation.isThisTrainstationInUse(name);
+    const isNewTrainstation = await Trainstation.isThisNameInUse(name);
     if (!isNewTrainstation) return res.status(409).send("Train station already exist. Please Update");
-    const trainstation = await trainstation(req.body, ["name", "open_hour", "close_hour", "image"])
-    await trainstation.save();
+    const trainstation = await Trainstation(req.body, ["name", "open_hour", "close_hour", "image"])
+    await trainstation.save();  
 
-    res.status(200).json(trainstation)
-
-    //update in the DB
+    //constante avec les informations de la station de train 
     const trainstationInfo = {
         name: trainstation.name,
         open_hour: trainstation.open_hour,
@@ -26,8 +24,8 @@ exports.createTrainstation = async (req, res) => {
         image: trainstation.image
     }
 
-    //Returns trainstation information
-    res.status(200).json({trainstation: trainstationInfo})
+    //Returns trainstation information avec le status 200 (ok)
+    res.status(200).json({trainstationInfo})
 }
 
 //Update train station

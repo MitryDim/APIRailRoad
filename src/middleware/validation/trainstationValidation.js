@@ -7,10 +7,15 @@ exports.validateInputCreate = (req,res,next) => {
             .max(255)
             .required(),
 
-        open_hour: Joi.date().default(() => moment().format, 'open hour created'),
+        open_hour: Joi.string()
+                        .regex(/^(\d{2}):(\d{2})$/)
+                        .required(),
 
-        close_hour: Joi.date().default(() => moment().format, 'close hour created'),
+        close_hour: Joi.string()
+                        .regex(/^(\d{2}):(\d{2})$/)
+                        .required()
     })
+
     const {error} = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -24,9 +29,13 @@ exports.validateInputUpdate = (req,res,next) => {
                 .max(255)
                 .required(),
 
-            open_hour: Joi.date().default(() => moment().format, 'open hour update'),
+            open_hour: Joi.string()
+                            .regex(/^(\d{2}):(\d{2})$/)
+                            .required(),
 
-            close_hour: Joi.date().default(() => moment().format, 'close hour update'),
+            close_hour: Joi.string()
+                            .regex(/^(\d{2}):(\d{2})$/)
+                            .required()
     })
     const {error} = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);

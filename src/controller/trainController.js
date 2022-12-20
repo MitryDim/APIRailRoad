@@ -2,17 +2,18 @@ require('dotenv').config();
 
 // Importing train context
 const Train = require("../models/trainModel");
+const Trainstation = require("../models/trainstationModel")
 
 //Create train
 exports.createTrain = async (req, res) => {
 
     const {name} = req.body;
-    const isNewTrain = await Train.isThisTrainInUse(name);
-    if (!isNewTrain) return res.status(409).send("Train Already Exist. Please Update");
-    const train = await train(req.body, ["name", "start_station", "end_station", "time_of_departure"])
-    await train.save();
+    const isNewTrain = await Train.isThisNameInUse(name);
 
-    res.status(200).json(train)
+    if (!isNewTrain) return res.status(409).send("Train Already Exist. Please Update");
+
+    const train = await Train(req.body, ["name", "start_station", "end_station", "time_of_departure"])
+    await train.save();
 
 
     //Update in the DB
@@ -24,7 +25,7 @@ exports.createTrain = async (req, res) => {
     }
 
     //return train information
-    res.status(200).json({train: trainInfo})
+    res.status(200).json({trainInfo})
 }
 
 //Update train
@@ -41,23 +42,23 @@ exports.trainUpdate = async (req,res,next) => {
 
     if (train.start_station != startStation)
     {
-        const isNewStartStation = await Train.isThisStartStationInUse(startStation);
+        const isNewStartStation = await trainstation.isThisNameInUse(startStation);
         if (!isNewStartStation) return res.status(409).send("Start station not exist, please enter an existing start station.");
     }
 
     if(train.end_station != endStation)
     {
-        const isNewEndStation = await Train.isThisEndStationInUse(endStation);
+        const isNewEndStation = await trainstation.isThisNameInUse(endStation);
         if (!isNewEndStation) return res.status(409).send("End station not exist, please enter an existing end station.")
     }
 
-    if(train.time_of_departure != timeOfDeparture)
-    {
-        const isNewTimeOfDeparture = await Train.isThisTimeOfDepartureInUse(timeOfDeparture);
-        if (!isNewTimeOfDeparture) return res.status(409).send("Time of departure is identical, please enter a new Time of departure.")
-    }
+    // if(train.time_of_departure != timeOfDeparture)
+    // {
+    //     const isNewTimeOfDeparture = await Train.isThisTimeOfDepartureInUse(timeOfDeparture);
+    //     if (!isNewTimeOfDeparture) return res.status(409).send("Time of departure is identical, please enter a new Time of departure.")
+    // }
 
-    await Train.findByIdAndUpdate(req.train._id, req.body)
+    await Train.findOneAndUpdate({name},req.body) //findByIdAndUpdate(req.train._id, req.body)
     res.status(200).send("updated successfully!");
 
 

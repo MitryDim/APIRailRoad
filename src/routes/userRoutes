@@ -1,5 +1,4 @@
 const express = require("express");
-const bcrypt = require('bcryptjs')
 const { createUser, userLogIn,userUpdate, userDelete, userLogOut} = require('../controller/userController');
 const {validateInputRegister,validateInputLogin,validateInputUpdate} = require('../middleware/validation/userValidation')
 const {isAuth} = require("../middleware/auth");

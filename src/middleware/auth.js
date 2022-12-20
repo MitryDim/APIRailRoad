@@ -18,7 +18,7 @@ exports.isAuth = async (req, res, next) => {
       if (error.name === 'JsonWebTokenError') {
         return res.status(403).send('Unauthorized access !');
       }
-      if (error.name === 'okenExpiredError') {
+      if (error.name === 'TokenExpiredError') {
         return res.status(498).send("Token expired try sign in !")
       }
 

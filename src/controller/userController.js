@@ -78,8 +78,8 @@ exports.userUpdate = async (req,res,next) => {
     if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const password = await bcrypt.hash(user.password, salt);
+    //const salt = await bcrypt.genSalt(10);
+   // const password = await bcrypt.hash(user.password, salt);
    
     await User.findByIdAndUpdate(req.user._id, req.body)
     res.status(200).send("updated successfully!");
@@ -107,9 +107,7 @@ exports.userDelete = async (req,res) => {
                 console.log("Deleted : ", docs);
             }
         });
-
          res.status(200).send("account is now delete !");
-
     }
     else {
         return res.status(400).send("please put an email");

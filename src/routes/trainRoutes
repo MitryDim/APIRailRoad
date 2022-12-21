@@ -9,6 +9,6 @@ const router = express.Router();
 
 router.post('/create', isAuth, isAdmin, validateInputCreate, createTrain);
 router.put('/update',isAuth, isAdmin, validateInputUpdate, trainUpdate);
-//router.delete('/delete', isAdmin, trainDelete);
+router.delete('/delete', isAuth,isAdmin, trainDelete);
 
 module.exports = router;

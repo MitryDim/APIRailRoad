@@ -85,7 +85,7 @@ exports.userProfil = async (req, res) => {
 exports.userUpdate = async (req, res, next) => {
     const { email, role } = req.body
 
-    let id = req.body._id
+    let id = req.query._id
     let userId = req.user._id
 
     //verification si ID passé en paramètre dans le body

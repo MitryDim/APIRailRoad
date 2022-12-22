@@ -90,7 +90,8 @@ exports.userUpdate = async (req, res, next) => {
     let userId = req.user._id
 
     //verification si ID passé en paramètre dans le body
-    if (id != undefined) {
+    if (id != undefined) 
+    {
         id = mongoose.Types.ObjectId(id)
         console.log(id)
         if ((id != req.user._id && req.user.role != "admin"))
@@ -100,7 +101,7 @@ exports.userUpdate = async (req, res, next) => {
     }
 
     //verification si un rôle est passé en paramètre
-    if (req.body.role != undefined && req.user.role != "admin")
+    if (role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
 
     const user = await User.findById(userId)

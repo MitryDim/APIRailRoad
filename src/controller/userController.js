@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { findById } = require('../models/userModel');
 const bcrypt = require('bcryptjs');
 const mongoose = require("mongoose")
 
@@ -100,9 +99,11 @@ exports.userUpdate = async (req, res, next) => {
             userId = id
     }
 
+
     //verification si un rôle est passé en paramètre
     if (role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
+
 
     const user = await User.findById(userId)
     //check de l'email
@@ -131,8 +132,9 @@ exports.userDelete = async (req, res) => {
             else {
                 console.log("Deleted : ", docs);
             }
-        })
-        res.status(200).send("account is now delete !");
+
+        });
+         res.status(200).send("account is now delete !");
     }
     else {
         return res.status(400).send("please put an email");

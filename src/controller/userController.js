@@ -13,7 +13,7 @@ const { func } = require('joi');
 exports.createUser = async (req, res) => {
 
     const { email } = req.body;
-
+    // check de l'email
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
@@ -52,7 +52,6 @@ exports.userLogIn = async (req, res) => {
         });
     }
 
-
     //Mise à jour en BDD
     await User.findByIdAndUpdate(user._id, {
         tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
@@ -65,84 +64,79 @@ exports.userLogIn = async (req, res) => {
 
     //retourne les informations user et token
     res.status(200).json({ user: userInfo, token })
+}
 
+exports.userProfil = async (req, res) => {
+    const { email } = req.query
+    if (req.user.email != email && !["employee","admin"].includes(req.user.role))
+        return res.status(403).send("you don't have permissions to view this profil")
+
+    const user = await User.findOne({ email })
+
+    const userInfo = {
+        pseudo: user.pseudo,
+        email: user.email
+    }
+
+    res.status(200).json(userInfo)
 }
 
 
 //Update
+exports.userUpdate = async (req, res, next) => {
+    const { email, role } = req.body
 
-exports.userUpdate = async (req,res,next) => {
-    const { email,role } = req.body
     let id = req.body._id
     let userId = req.user._id
 
-    console.log(userId)
-
-    if (id != undefined)
+    //verification si ID passé en paramètre dans le body
+    if (id != undefined) 
     {
         id = mongoose.Types.ObjectId(id)
         console.log(id)
-        if ((id != req.user._id && req.user.role != "admin")) 
+        if ((id != req.user._id && req.user.role != "admin"))
             return res.status(403).send("You cannot update an account other than yourself")
         else
             userId = id
     }
 
-    if (req.body.role != undefined && req.user.role != "admin")
+    //verification si un rôle est passé en paramètre
+    if (role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
 
-
     const user = await User.findById(userId)
-    if (user.email != email)
-    {
-    const isNewEmail = await User.isThisEmailInUse(email);
-    if (!isNewEmail) return res.status(409).send("email Already Exist.");
+    //check de l'email
+    if (user.email != email) {
+        const isNewEmail = await User.isThisEmailInUse(email);
+        if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
-
     await User.findByIdAndUpdate(userId, req.body)
     res.status(200).send("updated successfully!");
-  
-
 }
 
 
-exports.userDelete = async (req,res) => {
-
-    const  { email } = req.query;
+exports.userDelete = async (req, res) => {
+    const { email } = req.query;
     console.log(email)
     if (email != undefined) {
         const user = await User.findById(req.user._id)
-        if (user.email != email)
-        {
+        if (user.email != email) {
             return res.status(403).send("You cannot delete an account other than yourself");
         }
-    
-        await User.findByIdAndDelete(req.user._id).then(function (err, data)
-        {
-            if (err){
-                            console.log(err)
-                        }
-                        else{
-                            console.log("Deleted : ", docs);
-                        }
+
+        await User.findByIdAndDelete(req.user._id).then(function (err, data) {
+            if (err) {
+                console.log(err)
+            }
+            else {
+                console.log("Deleted : ", docs);
+            }
         })
-
-    //    await User.findByIdAndDelete(req.user._id, function (err, docs) {
-    //         if (err){
-    //             console.log(err)
-    //         }
-    //         else{
-    //             console.log("Deleted : ", docs);
-    //         }
-    //     });
-
-         res.status(200).send("account is now delete !");
-
+        res.status(200).send("account is now delete !");
     }
     else {
         return res.status(400).send("please put an email");
     }
-   
 }
 
 //Logout

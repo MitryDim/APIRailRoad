@@ -68,8 +68,7 @@ exports.userLogIn = async (req, res) => {
 
 exports.userProfil = async (req, res) => {
     const { email } = req.query
-
-    if (req.user.email != email && req.user.role != "employee")
+    if (req.user.email != email && !["employee","admin"].includes(req.user.role))
         return res.status(403).send("you don't have permissions to view this profil")
 
     const user = await User.findOne({ email })

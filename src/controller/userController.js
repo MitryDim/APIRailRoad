@@ -1,16 +1,18 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose")
 
 require('dotenv').config();
 
 // importing user context
 const User = require("../models/userModel");
+const { func } = require('joi');
 
 //register
 exports.createUser = async (req, res) => {
 
     const { email } = req.body;
-
+    // check de l'email
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
@@ -49,7 +51,6 @@ exports.userLogIn = async (req, res) => {
         });
     }
 
-
     //Mise à jour en BDD
     await User.findByIdAndUpdate(user._id, {
         tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
@@ -62,57 +63,82 @@ exports.userLogIn = async (req, res) => {
 
     //retourne les informations user et token
     res.status(200).json({ user: userInfo, token })
+}
 
+exports.userProfil = async (req, res) => {
+    const { email } = req.query
+    if (req.user.email != email && !["employee","admin"].includes(req.user.role))
+        return res.status(403).send("you don't have permissions to view this profil")
+
+    const user = await User.findOne({ email })
+
+    const userInfo = {
+        pseudo: user.pseudo,
+        email: user.email
+    }
+
+    res.status(200).json(userInfo)
 }
 
 
 //Update
+exports.userUpdate = async (req, res, next) => {
+    const { email, role } = req.body
 
-exports.userUpdate = async (req,res,next) => {
-    const { email } = req.body;
-    const user = await User.findById(req.user._id)
+    let id = req.body._id
+    let userId = req.user._id
 
-    if (user.email != email)
+    //verification si ID passé en paramètre dans le body
+    if (id != undefined) 
     {
-    const isNewEmail = await User.isThisEmailInUse(email);
-    if (!isNewEmail) return res.status(409).send("email Already Exist.");
+        id = mongoose.Types.ObjectId(id)
+        console.log(id)
+        if ((id != req.user._id && req.user.role != "admin"))
+            return res.status(403).send("You cannot update an account other than yourself")
+        else
+            userId = id
     }
 
-    //const salt = await bcrypt.genSalt(10);
-   // const password = await bcrypt.hash(user.password, salt);
-   
-    await User.findByIdAndUpdate(req.user._id, req.body)
-    res.status(200).send("updated successfully!");
-  
 
+    //verification si un rôle est passé en paramètre
+    if (role != undefined && req.user.role != "admin")
+        return res.status(403).send("You don't have permissions for update this role.")
+
+
+    const user = await User.findById(userId)
+    //check de l'email
+    if (user.email != email) {
+        const isNewEmail = await User.isThisEmailInUse(email);
+        if (!isNewEmail) return res.status(409).send("email Already Exist.");
+    }
+    await User.findByIdAndUpdate(userId, req.body)
+    res.status(200).send("updated successfully!");
 }
 
 
-exports.userDelete = async (req,res) => {
-
-    const  { email } = req.query;
+exports.userDelete = async (req, res) => {
+    const { email } = req.query;
     console.log(email)
     if (email != undefined) {
         const user = await User.findById(req.user._id)
-        if (user.email != email)
-        {
+        if (user.email != email) {
             return res.status(403).send("You cannot delete an account other than yourself");
         }
-    
-       await User.findByIdAndDelete(req.user._id, function (err, docs) {
-            if (err){
+
+        await User.findByIdAndDelete(req.user._id).then(function (err, data) {
+            if (err) {
                 console.log(err)
             }
-            else{
+            else {
                 console.log("Deleted : ", docs);
             }
+
         });
          res.status(200).send("account is now delete !");
     }
     else {
         return res.status(400).send("please put an email");
     }
-   
 }
 
 //Logout

@@ -12,6 +12,6 @@ router.post('/login',validateInputLogin,userLogIn);
 router.put('/update',isAuth,validateInputUpdate,userUpdate)
 router.delete('/delete',isAuth,userDelete)
 router.post('/logout',isAuth,userLogOut);
-
+ 
 
 module.exports = router;

@@ -1,5 +1,5 @@
 const express = require("express");
-const {createTrainstation, trainstationUpdate, trainstationDelete} = require('../controller/trainstationController');
+const {createTrainstation, trainstationUpdate, trainstationDelete,trainstationFindAll} = require('../controller/trainstationController');
 const {validateInputCreate,validateInputUpdate} = require('../middleware/validation/trainstationValidation');
 const {isAuth} = require("../middleware/auth");
 const {isAdmin} = require("../middleware/admin");
@@ -9,6 +9,7 @@ const router = express.Router();
 
 router.post('/create',isAuth, isAdmin, validateInputCreate, createTrainstation);
 router.put('/update',isAuth, isAdmin, validateInputUpdate, trainstationUpdate);
+router.get('/read',trainstationFindAll)
 router.delete('/delete', isAuth,isAdmin, trainstationDelete);
 
 

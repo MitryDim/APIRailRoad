@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+const { json } = require('body-parser');
+const { query } = require('express');
 const { default: mongoose } = require('mongoose');
 // Importing train context
 const Train = require("../models/trainModel");
@@ -8,7 +10,7 @@ const Trainstation = require("../models/trainstationModel")
 //Create train
 exports.createTrain = async (req, res) => {
 
-    const {name} = req.body;
+    const { name } = req.body;
     const isNewTrain = await Train.isThisNameInUse(name);
 
     if (!isNewTrain) return res.status(409).send("Train Already Exist. Please Update");
@@ -26,64 +28,172 @@ exports.createTrain = async (req, res) => {
     }
 
     //return train information
-    res.status(200).json({trainInfo})
+    res.status(200).json({ trainInfo })
 }
 
 //Update train
-exports.trainUpdate = async (req,res,next) => {
-    let {_id} = req.query;
+exports.trainUpdate = async (req, res, next) => {
+    let nameOfTrain = req.query.name;
 
-    if (_id == undefined)
-        return res.status(400).json({error: "No train id provided"});
+    if (nameOfTrain == undefined)
+        return res.status(400).json({ error: "No train id provided" });
 
-    id = mongoose.Types.ObjectId(_id);
-    
-    const train = await Train.findById(id);
+    // id = mongoose.Types.ObjectId(_id);
+
+    const train = await Train.findOne({ name: nameOfTrain });
 
     if (train == null)
-        return res.status(404).json({error: "Train Not Found"});
+        return res.status(404).json({ error: "Train Not Found" });
 
-    const {name, start_station, end_station } = req.body;
+    const { name, start_station, end_station } = req.body;
 
 
-    if (train.name != name)
-    {
+    if (train.name != name) {
         const isNewName = await Train.isThisNameInUse(name);
         if (!isNewName) return res.status(409).send("Name is identical, please enter a new name.");
     }
 
-    if (train.start_station != start_station)
-    {
+    if (train.start_station != start_station) {
         const isNewStartStation = await Trainstation.isThisNameInUse(start_station);
         if (isNewStartStation) return res.status(409).send("Start station not exist, please enter an existing start station.");
     }
 
-    if(train.end_station != end_station)
-    {
+    if (train.end_station != end_station) {
         const isNewEndStation = await Trainstation.isThisNameInUse(end_station);
         if (isNewEndStation) return res.status(409).send("End station not exist, please enter an existing end station.")
     }
 
 
-    await Train.findByIdAndUpdate(id,req.body) //findByIdAndUpdate(req.train._id, req.body)
+    await Train.findByIdAndUpdate(train._id, req.body) //findByIdAndUpdate(req.train._id, req.body)
     res.status(200).send("updated successfully!");
 }
 
 
-exports.trainDelete = async (req,res) => {
+exports.trainFindAll = async (req, res) => {
+    let sort = {};
+    let train = {}
+    let limit = 10;
+    let skip = 0;
 
-    let {_id} = req.query;
 
-    if (_id == undefined)
-        return res.status(400).json({error: "No train id provided"});
-    
-    const id = mongoose.Types.ObjectId(_id);
-        
-    await Train.findByIdAndDelete(id).then(function (err, docs) {
-        if (err){
+
+    // train = await Train.find({})
+    const { station_name, type, sortBy, filter } = req.query;
+
+    if (req.query.limit) limit = req.query.limit;
+
+    if (req.query.skip) skip = req.query.skip;
+
+
+    if (sortBy) {
+        const parts = req.query.sortBy.split(";");
+
+        for (let i = 0; i < parts.length; i++) {
+            let split_sort = parts[i].split(":");
+            sort[(split_sort[0].toString())] = split_sort[1] === "desc" ? -1 : 1;
+        }
+    }
+
+    switch (type) {
+        case "start":
+            train = await Train.find({ start_station: station_name }).limit(limit).skip(skip).sort(sort)
+            break;
+        case "arrival":
+            train = await Train.find({ end_station: station_name }).limit(limit).skip(skip).sort(sort)
+            break;
+        default:
+            train = await Train.find().limit(limit).skip(skip).sort(sort)
+
+
+            break;
+    }
+
+    if (filter) {
+        function isSingle(filter) {
+            return (filter && 'o' in filter && 'm' in filter && 'v' in filter);
+        }
+
+        function isComposite(filter) {
+            return (filter && 'lo' in filter);
+        }
+
+        function createBody(filter) {
+
+            if (isComposite(filter)) {
+                var bdy = "";
+                if (filter.v.length > 1) {
+                    var o = filter.lo;
+                    return "(" + createBody(filter.v.shift()) + " " + o + " " + createBody({ lo: filter.lo, v: filter.v }) + ")";
+                } else if (filter.v.length == 1) {
+                    return createBody(filter.v.shift());
+                }
+                return bdy;
+            } else if (isSingle(filter)) {
+                var o = filter.o;
+                if (typeof filter.v == "string") filter.v = "'" + filter.v + "'"
+                return "item." + filter.m + " " + o + "  " + filter.v;
+            }
+        }
+        var createFunc = function (filter) {
+            var body = createBody(filter);
+            var f = new Function("item", " return " + body + ";");
+            return f;
+        }
+
+        function applyFilter(input, filter) {
+            if (filter == undefined) {
+                return input;
+            }
+
+            var fun = createFunc(filter);
+            var output = input.filter(fun);
+            return output;
+        };
+        //m:membre,o:operateur,v:valeur.
+
+        filterSplit = filter.split(";")
+        let filterQuery1 = ""
+        if (filterSplit.length < 2) {
+            filterQuerySplit = filter.split(":")
+            filterQuery1 = { m: filterQuerySplit[0].trim(), o: filterQuerySplit[1].trim(), v: filterQuerySplit[2].trim() };
+        }
+        // exemple : 
+
+        // var filterQuery1 = { m: "time_of_departure", o: ">", v: "22/12/2022" };//simpe query
+
+        // var filterQuery1 = {
+        //     lo: "&&", v: [
+        //         { m: "time_of_departure", o: ">", v: "21/12/2022" },
+        //         { m: "time_of_departure", o: "<", v: "22/12/2022" }]
+        // }; //composite query
+        train = applyFilter(train, filterQuery1);
+
+    }
+
+
+    if (!train)
+        return res.status(404).json({ error: "Train Not Found" });
+
+    res.status(200).json(train);
+
+}
+
+
+
+exports.trainDelete = async (req, res) => {
+
+    let { name } = req.query;
+
+    if (name == undefined)
+        return res.status(400).json({ error: "No train id provided" });
+
+    // const id = mongoose.Types.ObjectId(_id);
+
+    await Train.findOneAndDelete({ name }).then(function (err, docs) {
+        if (err) {
             console.log(err)
         }
-        else{
+        else {
             console.log("Deleted : ", docs);
         }
     });

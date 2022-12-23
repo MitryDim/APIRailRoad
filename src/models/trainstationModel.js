@@ -3,7 +3,10 @@ const trainstationSchema = new mongoose.Schema({
     name: { type: String, required:true, trim: true, unique : true },
     open_hour: { type: String, required:true },
     close_hour: { type: String, required:true},
-    images: [{ type: Object }],
+    image:  {
+        data: Buffer,
+        contentType: String
+    },
 });
 
 trainstationSchema.statics.isThisNameInUse = async function (name) {

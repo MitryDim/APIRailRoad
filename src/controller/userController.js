@@ -75,7 +75,7 @@ exports.userProfil = async (req, res) => {
     const userInfo = {
         pseudo: user.pseudo,
         email: user.email,
-        role: user.role
+        role: user.role 
     }
 
     res.status(200).json(userInfo)

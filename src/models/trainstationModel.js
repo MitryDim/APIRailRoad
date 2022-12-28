@@ -1,12 +1,10 @@
+const { string, binary } = require("joi");
 const mongoose = require("mongoose");
 const trainstationSchema = new mongoose.Schema({
     name: { type: String, required:true, trim: true, unique : true },
     open_hour: { type: String, required:true },
     close_hour: { type: String, required:true},
-    image:  {
-        data: Buffer,
-        contentType: String
-    },
+    image:  {type: String,required: false,},
 });
 
 trainstationSchema.statics.isThisNameInUse = async function (name) {

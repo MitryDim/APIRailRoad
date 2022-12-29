@@ -48,8 +48,8 @@ exports.validateInputUpdate = (req, res, next) => {
         close_hour: Joi.string()
             .regex(/^(\d{2}):(\d{2})$/)
             .required(),
-
-
+        
+        image: Joi.string().min(0)
 
     })
     const { error } = schema.validate(req.body);

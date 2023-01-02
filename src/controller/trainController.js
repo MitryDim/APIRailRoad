@@ -1,8 +1,5 @@
 require('dotenv').config();
 
-const { json } = require('body-parser');
-const { query } = require('express');
-const { default: mongoose } = require('mongoose');
 // Importing train context
 const Train = require("../models/trainModel");
 const Trainstation = require("../models/trainstationModel")

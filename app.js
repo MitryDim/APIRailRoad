@@ -4,6 +4,8 @@ const express = require("express");
 const userRoute = require("./src/routes/userRoutes")
 const trainRoute = require("./src/routes/trainRoutes")
 const trainstationRoute = require("./src/routes/trainstationRoutes")
+const ticketsRoutes = require("./src/routes/ticketsRoutes")
+
 const bodyParser = require("body-parser");
 
 
@@ -18,9 +20,10 @@ app.use("/users", userRoute);
 app.use("/trains", trainRoute);
 app.use("/trainstations", trainstationRoute)
 
+app.use("/ticket",ticketsRoutes)
+
 //View image upload
 app.use('/trainstationsUploads', express.static('src/assets/uploads'));
-
 
 
 

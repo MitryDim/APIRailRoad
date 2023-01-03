@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
-    "test": "set NODE_ENV=test && jest --testTimeout=5000"
+    "test": "set NODE_ENV=test && mocha"
   },
   "keywords": [],
   "author": "",

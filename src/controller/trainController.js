@@ -69,17 +69,16 @@ exports.trainUpdate = async (req, res, next) => {
 exports.trainFindAll = async (req, res) => {
     let sort = {};
     let train = {}
-    let limit = 10;
-    let skip = 0;
+
 
 
 
     // train = await Train.find({})
     const { station_name, type, sortBy, filter } = req.query;
 
-    if (req.query.limit) limit = req.query.limit;
+    let limit = req.query.limit || 10;
 
-    if (req.query.skip) skip = req.query.skip;
+    let skip = req.query.skip || 0;
 
 
     if (sortBy) {

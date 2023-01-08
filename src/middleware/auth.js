@@ -10,24 +10,22 @@ exports.isAuth = async (req, res, next) => {
       const decode = jwt.verify(token, process.env.JWT_SECRET_KEY);
       const user = await User.findById(decode.userId);
 
-      if (!user) return res.status(403).send('unauthized access !');
+      if (!user) return res.status(401).send('unauthized access !');
       req.user = user;
 
       next();
     } catch (error) {
-      if (error.name === 'JsonWebTokenError') {
-        return res.status(403).send('Unauthorized access !');
-      }
-      if (error.name === 'TokenExpiredError') {
-        return res.status(498).send("Token expired try sign in !")
-      }
+      if (error.name === 'JsonWebTokenError') 
+        return res.status(401).send('Unauthorized access !');
+      
+      if (error.name === 'TokenExpiredError') 
+        return res.status(403).send("Token expired try sign in !")
+      
 
       res.status(500).send("Internal server error !")
-
     }
   }
   else
-  {
-    res.status(403).send('Unauthorized access !');
-  }
+    res.status(401).send('Unauthorized access !');
+  
 };

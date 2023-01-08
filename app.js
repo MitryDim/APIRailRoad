@@ -8,12 +8,14 @@ const ticketsRoutes = require("./src/routes/ticketsRoutes")
 
 const bodyParser = require("body-parser");
 
-
+console.log("test");
 const app = express();
 
-app.use(express.json());
+app.use(bodyParser.json());
 
-app.use(express.urlencoded({ extended: false }));
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json( { type: 'application/json'}));
 
 
 app.use("/users", userRoute);
@@ -25,7 +27,15 @@ app.use("/ticket",ticketsRoutes)
 //View image upload
 app.use('/trainstationsUploads', express.static('src/assets/uploads'));
 
+//Get port in .env file 
+const { API_PORT } = process.env;
+const port = API_PORT;
 
+// server listening 
+
+const server = app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
 
 
 module.exports = app;

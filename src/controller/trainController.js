@@ -6,7 +6,6 @@ const Trainstation = require("../models/trainstationModel")
 
 //Create train
 exports.createTrain = async (req, res) => {
-
     const { name } = req.body;
     const isNewTrain = await Train.isThisNameInUse(name);
 
@@ -15,17 +14,16 @@ exports.createTrain = async (req, res) => {
     const train = await Train(req.body, ["name", "start_station", "end_station", "time_of_departure"])
     await train.save();
 
-
-    //Update in the DB
     const trainInfo = {
         name: train.name,
         start_station: train.start_station,
         end_station: train.end_station,
-        time_of_departure: train.time_of_departure
+        time_of_departure: train.time_of_departure,
+        _id: train._id
     }
 
     //return train information
-    res.status(200).json({ trainInfo })
+    res.status(200).json(trainInfo)
 }
 
 //Update train
@@ -170,6 +168,7 @@ exports.trainFindAll = async (req, res) => {
         return res.status(404).json({ error: "Train Not Found" });
 
     res.status(200).json(train);
+    
 }
 
 

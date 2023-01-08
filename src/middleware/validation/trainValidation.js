@@ -19,8 +19,9 @@ exports.validateInputCreate = (req, res, next) => {
             .required(),
 
         time_of_departure: Joi.string()
-                                .regex(/^(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})$/)
+                                .regex(/^(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})$/).required()
     })
+
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
@@ -29,7 +30,7 @@ exports.validateInputCreate = (req, res, next) => {
     if (start_station == end_station)
         return res.status(400).send("start station and end station must be different")
 
-            console.log(start_station)
+            
     if (!trainStation.isThisNameInUse(start_station))
         return res.status(400).send("please put an existing start station")
 

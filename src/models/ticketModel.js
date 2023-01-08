@@ -8,4 +8,4 @@ const ticketSchema = new mongoose.Schema({
 
 
 
-module.exports = mongoose.model("Book",ticketSchema);
+module.exports = mongoose.model("Tickets",ticketSchema);

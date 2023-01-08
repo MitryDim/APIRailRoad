@@ -4,10 +4,10 @@ const Joi = require('joi');
 
 exports.validateInputCreate = (req, res, next) => {
 
-    let newImage = null;
-if(req.file && req.file.path) {
-        newImage = req.file.path.replace(/\\/g, "/");
-}
+    let newImage = Buffer.alloc(0);
+    if (req.file) {
+        newImage = req.file.buffer
+    }
 
     const schema = Joi.object({
         name: Joi.string()
@@ -23,18 +23,21 @@ if(req.file && req.file.path) {
             .regex(/^(\d{2}):(\d{2})$/)
             .required(),
 
-        image: Joi.string().required()
-    })  
-    let data = {image: newImage,...req.body};
-    
+        image: Joi.binary().min(1).required()
+    })
+    let data = { image: newImage, ...req.body };
+    const { error } = schema.validate(data)
 
-    const { error } = schema.validate(data)   // schema.validate(req);
     if (error) return res.status(400).send(error.details[0].message);
 
     next();
 };
 
 exports.validateInputUpdate = (req, res, next) => {
+    let newImage = null;
+    if (req.file) {
+        newImage = req.file.buffer
+    }
     const schema = Joi.object({
         name: Joi.string()
             .min(6)
@@ -48,11 +51,14 @@ exports.validateInputUpdate = (req, res, next) => {
         close_hour: Joi.string()
             .regex(/^(\d{2}):(\d{2})$/)
             .required(),
-        
-        image: Joi.string().min(0)
+
+        image: Joi.binary().optional()
 
     })
-    const { error } = schema.validate(req.body);
+
+    let data = { image: newImage, ...req.body };
+    const { error } = schema.validate(data);
+
     if (error) return res.status(400).send(error.details[0].message);
 
     next();

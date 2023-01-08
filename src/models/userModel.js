@@ -35,9 +35,8 @@ userSchema.statics.isThisEmailInUse = async function (email) {
   }
 };
 
-
+//Action lors d'un update
 userSchema.pre('findOneAndUpdate', async function (next) {
-  console.log('update')
   const userToUpdate = await this.model.findOne(this.getQuery())
   if (this._update.password != undefined)
   {
@@ -47,8 +46,8 @@ userSchema.pre('findOneAndUpdate', async function (next) {
   }
 })
 
+//Action lors d'un save
 userSchema.pre('save', function (next) {
-  console.log('save')
   var user = this;
   bcrypt.hash(user.password, 10, function (err, hash) {
     if (err) {

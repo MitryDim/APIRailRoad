@@ -3,13 +3,20 @@ const mongoose = require("mongoose");
 
 mongoose.set('strictQuery', false);
 
+
+let URI = "";
+
 const { MONGO_URI } = process.env;
+const { MONGO_URI_TEST } = process.env;
 
-const URI = process.env.MONGO_URI || MONGO_URI
+if (process.env.NODE_ENV.trim() !== 'test')
+  URI = process.env.MONGO_URI || MONGO_URI
+else
+   URI = process.env.MONGO_URI_TEST || MONGO_URI_TEST
 
-exports.connect = () => {
-  // Connecting to the database
-  mongoose
+
+exports.connect = async () => {
+  await mongoose
     .connect(URI)
     .then(() => {
       console.log("Successfully connected to database");

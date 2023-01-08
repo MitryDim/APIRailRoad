@@ -6,19 +6,56 @@ const Train = require("../models/trainModel");
 const DIR = './'
 const fs = require('fs');
 const path = require('path');
+const sharp = require('sharp');
+
+//image check size 
+async function ImageUploading(imgUrl, data) {
+    sharp(data).metadata()
+        .then(metadata => {
+            if (metadata.width > 200 || metadata.height > 200) {
+
+                //conservation des proportions de l'image (évite la déformation)
+                let width = metadata.width;
+                let height = metadata.height;
+                if (width > 200) {
+                    const aspectRatio = width / height;
+                    width = 200;
+                    height = Math.round(width / aspectRatio);
+                }
+                if (height > 200) {
+                    const aspectRatio = width / height;
+                    height = 200;
+                    width = Math.round(height * aspectRatio);
+                }
+                // Resize the image
+                return sharp(data).resize(width, height).toBuffer();
+            }
+            return data;
+
+        }).then(processedData => { fs.writeFileSync(imgUrl, processedData); })
+        .catch(err => {
+            console.log("err");
+            return (err.message)
+        });
 
 
+}
 
 //Create train station
 exports.createTrainstation = async (req, res) => {
     const { name, open_hour, close_hour } = req.body;
-    console.log(req.body);
 
     const isNewTrainstation = await Trainstation.isThisNameInUse(name);
     if (!isNewTrainstation) return res.status(409).send("Train station already exist. Please Update");
     let imgUrl = "";
 
-    if (req.file) imgUrl = `src/assets/uploads/${name}${path.extname(req.file.filename)}`;
+    if (req.file) {
+
+        const imgUrl = `src/assets/uploads/${name}${path.extname(req.file.originalname)}`;
+        const data = req.file.buffer;
+
+        ImageUploading(imgUrl, data)
+    }
 
     const trainstation = new Trainstation
         (
@@ -50,7 +87,6 @@ exports.trainstationUpdate = async (req, res, next) => {
     const newNameOftrainStation = req.body.name;
 
     const trainstation = await Trainstation.findOne({ name })
-    console.log(trainstation)
 
     if (!trainstation)
         return res.status(404).send("Train station not found");
@@ -64,26 +100,17 @@ exports.trainstationUpdate = async (req, res, next) => {
         await Trainstation.findOneAndUpdate({ name }, req.body)
 
         if (req.file) {
-            let getImageName = "";
-            let Imagename = "";
-            getImageName = `src/assets/uploads/${newNameOftrainStation}${path.extname(req.file.filename)}`;
-            console.log("req.file : " + getImageName.match(/\/([^\/?#]+)[^\/]*$/)[1]);
+            const getImageName = `src/assets/uploads/${newNameOftrainStation}${path.extname(req.file.originalname)}`;
+            const data = req.file.buffer
 
-            if (trainstation.image) {
-                Imagename = trainstation.image.match(/\/([^\/?#]+)[^\/]*$/)[1];
+            ImageUploading(getImageName, data)
 
-                if (getImageName.match(/\/([^\/?#]+)[^\/]*$/)[1] != Imagename)
-                    if (fs.existsSync(DIR + trainstation.image))
-                        fs.unlinkSync(DIR + trainstation.image);
-            }
             await Trainstation.findOneAndUpdate({ newNameOftrainStation }, { image: getImageName[1] })
         }
-
         await Train.updateMany({ start_station: name }, { start_station: newNameOftrainStation })
         await Train.updateMany({ end_station: name }, { end_station: newNameOftrainStation })
-    } catch (error) {
 
-        console.log(error);
+    } catch (error) {
         return res.status(500).send(error);
     }
 
@@ -127,8 +154,6 @@ exports.trainstationFindAll = async (req, res, next) => {
             image: imgUrl,
 
         })
-
-
     }
 
     if (!trainstationInfo || trainstationInfo.length === 0) return res.status(404).send("No trainstations found");
@@ -182,10 +207,6 @@ exports.trainstationDelete = async (req, res) => {
         res.status(200).send("Train station and trains belonging to the station is now delete !");
 
     } catch (error) {
-        //  console.log(error);
         res.status(500).send("error when deleting trainstation ");
-
     }
-
-
 }

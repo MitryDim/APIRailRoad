@@ -179,25 +179,22 @@ exports.trainstationDelete = async (req, res) => {
                 fs.unlinkSync(DIR + trainstationInfo.image);
 
         //suppresion de la station
-        await Trainstation.findOneAndDelete({ name }), function (err, docs) {
-            if (err) {
-                console.log("error : " + err);
-                throw new Error("error when deleting trainstation")
-            }
-            else {
-                console.log("Deleted : ", docs);
-            }
-        };
+        await Trainstation.findOneAndDelete({ name })
+            .then(result => {
+                console.log("Deleted : ", result);
+            })
+            .catch(err => { throw new Error("error when deleting trainstation " + err) });;
+
 
         //suppression des trains qui comporte la station
-        await Train.findOneAndDelete({ start_station: req.query.name }), function (err, docs) {
+        await Train.deleteMany({ start_station: req.query.name }), function (err, docs) {
             if (err) {
                 console.log(err)
                 throw new Error("error when deleting start_station")
             }
         };
 
-        await Train.findOneAndDelete({ end_station: req.query.name }), function (err, docs) {
+        await Train.deleteMany({ end_station: req.query.name }), function (err, docs) {
             if (err) {
                 console.log(err)
                 throw new Error("error when deleting end_station")

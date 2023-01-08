@@ -1,0 +1,5 @@
+require('./user.test')
+require('./trainstation.test')
+require('./train.test')
+require('./ticket.test')
+require('./delete.test')

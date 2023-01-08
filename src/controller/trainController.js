@@ -168,38 +168,33 @@ exports.trainFindAll = async (req, res) => {
         return res.status(404).json({ error: "Train Not Found" });
 
     res.status(200).json(train);
-    
+
 }
 
 
 
 exports.trainDelete = async (req, res) => {
 
-    let { name } = req.query;
+    const { name } = req.query;
 
     if (name == undefined)
         return res.status(400).json({ error: "No train id provided" });
 
     // const id = mongoose.Types.ObjectId(_id);
     try {
-        await Train.findOneAndDelete({ name }).then(function (err, docs) {
-            if (err) {
-               throw new Error("error when deleting train")
-            }
-            else {
-                console.log("Deleted : ", docs);
-            }
-        });
+        await Train.findOneAndDelete({ name })
+            .catch(err => { throw new Error("error when deleting trainstation " + err) });;
 
         res.status(200).send("Train is now delete !");
-        
+
     } catch (error) {
+        console.log(error)
         res.status(500).send("Error when deleting train");
 
     }
 
 
-   
 
-  
+
+
 }

@@ -2,6 +2,7 @@ let request = require('supertest')("http://localhost:4001")
 require('dotenv').config();
 const expect = require("chai").expect;
 
+
 let current_token = "";
 let user = {};
 let trainstation = [];
@@ -30,7 +31,7 @@ describe('/ticket', function () {
             });
     });
 
-
+    //validation ticket book
     it('POST ticket validate', async function () {
         await request
             .get('/ticket/validate')

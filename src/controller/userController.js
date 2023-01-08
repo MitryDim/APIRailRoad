@@ -124,9 +124,9 @@ exports.userUpdate = async (req, res, next) => {
 
 exports.userDelete = async (req, res) => {
     const { email } = req.query;
-
     if (email != undefined) {
         const user = await User.findById(req.user._id)
+        
         if (user.email != email) {
             return res.status(403).send("You cannot delete an account other than yourself");
         }

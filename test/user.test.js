@@ -4,7 +4,6 @@ require('dotenv').config();
 const app = require('../app');
 const expect = require("chai").expect;
 const appPath = process.cwd();
-const userModel = require("../src/models/userModel");
 
 
 var currentResponse={}

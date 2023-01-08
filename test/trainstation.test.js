@@ -1,8 +1,6 @@
 let request = require('supertest')("http://localhost:4001")
 require('dotenv').config();
 const fs = require('fs');
-const expect = require("chai").expect;
-const appPath = process.cwd();
 
 const test_Trainstation = [
     { name: "trainstation1", open_hour: "08:00", close_hour: "17:00", image: `./test/test.jpg` },

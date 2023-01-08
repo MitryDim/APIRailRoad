@@ -7,8 +7,6 @@ const trainstationRoute = require("./src/routes/trainstationRoutes")
 const ticketsRoutes = require("./src/routes/ticketsRoutes")
 
 const bodyParser = require("body-parser");
-
-console.log("test");
 const app = express();
 
 app.use(bodyParser.json());

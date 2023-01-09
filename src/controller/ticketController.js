@@ -26,6 +26,7 @@ exports.bookTickets = async (req, res, next) => {
 
         await ticket.save();
         res.status(200).send("Ticket booked !");
+        return next();
     }
     else
         res.status(500).send('server error');
@@ -67,10 +68,9 @@ exports.validTickets = async (req, res, next) => {
         }
 
         res.status(200).json({ tickerinfo: ticketInfo });
-
+        return next();
     }
     else
         res.status(500).send('server error');
-
-
+        
 }

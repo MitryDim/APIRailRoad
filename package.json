@@ -2,11 +2,11 @@
   "name": "projet",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon app.js",
-    "test": "set NODE_ENV=test && mocha test/test.js  --timeout 90000 --exit"
+    "start": "node app.js",
+    "dev": "nodemon app.js --ignore filename.json",
+    "test": "set NODE_ENV=test && mocha test/test.js  --timeout 90000 "
   },
   "keywords": [],
   "author": "",
@@ -17,21 +17,19 @@
     "chai-http": "^4.3.0",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "express-oas-generator": "^1.0.46",
     "joi": "^17.7.0",
     "joi-objectid": "^4.0.2",
     "joi-password-complexity": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
+    "minimist": "*",
     "mongoose": "^6.8.0",
     "multer": "^1.4.5-lts.1",
     "sharp": "^0.31.3"
   },
   "devDependencies": {
-    "jest": "^29.3.1",
     "mocha": "^10.2.0",
     "nodemon": "^2.0.20",
     "supertest": "^6.3.3"
-  },
-  "jest": {
-    "testEnvironment": "node"
   }
 }

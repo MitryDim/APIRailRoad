@@ -3,9 +3,10 @@ require('dotenv').config();
 // Importing train context
 const Train = require("../models/trainModel");
 const Trainstation = require("../models/trainstationModel")
+const Ticket = require('../models/ticketModel')
 
 //Create train
-exports.createTrain = async (req, res) => {
+exports.createTrain = async (req, res,next) => {
     const { name } = req.body;
     const isNewTrain = await Train.isThisNameInUse(name);
 
@@ -24,6 +25,7 @@ exports.createTrain = async (req, res) => {
 
     //return train information
     res.status(200).json(trainInfo)
+    return next();
 }
 
 //Update train
@@ -61,10 +63,11 @@ exports.trainUpdate = async (req, res, next) => {
 
     await Train.findByIdAndUpdate(train._id, req.body) //findByIdAndUpdate(req.train._id, req.body)
     res.status(200).send("updated successfully!");
+    return next();
 }
 
 
-exports.trainFindAll = async (req, res) => {
+exports.trainFindAll = async (req, res,next) => {
     let sort = {};
     let train = {}
 
@@ -168,12 +171,13 @@ exports.trainFindAll = async (req, res) => {
         return res.status(404).json({ error: "Train Not Found" });
 
     res.status(200).json(train);
+    return next();
 
 }
 
 
 
-exports.trainDelete = async (req, res) => {
+exports.trainDelete = async (req, res,next) => {
 
     const { name } = req.query;
 
@@ -182,11 +186,14 @@ exports.trainDelete = async (req, res) => {
 
     // const id = mongoose.Types.ObjectId(_id);
     try {
-        await Train.findOneAndDelete({ name })
+        await Train.findOneAndDelete({ name }).then( async (result) => {
+            await Ticket.findOneAndDelete({ trainId: result._id })
+})
             .catch(err => { throw new Error("error when deleting trainstation " + err) });;
 
         res.status(200).send("Train is now delete !");
-
+        return next();
+        
     } catch (error) {
         console.log(error)
         res.status(500).send("Error when deleting train");

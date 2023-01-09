@@ -7,7 +7,7 @@ require('dotenv').config();
 const User = require("../models/userModel");
 
 //register
-exports.createUser = async (req, res) => {
+exports.createUser = async (req, res,next) => {
 
     const { email } = req.body;
     // check de l'email
@@ -27,10 +27,11 @@ exports.createUser = async (req, res) => {
     }
 
     res.status(200).json(userInfo)
+    return next();
 }
 
 //Login
-exports.userLogIn = async (req, res) => {
+exports.userLogIn = async (req, res,next) => {
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
@@ -68,9 +69,10 @@ exports.userLogIn = async (req, res) => {
 
     //retourne les informations user et token
     res.status(200).json({ user: userInfo, token })
+    return next();
 }
 
-exports.userProfil = async (req, res) => {
+exports.userProfil = async (req, res,next) => {
     const { email } = req.query
     if (req.user.email != email && !["employee", "admin"].includes(req.user.role))
         return res.status(403).send("you don't have permissions to view this profil")
@@ -84,6 +86,7 @@ exports.userProfil = async (req, res) => {
     }
 
     res.status(200).json(userInfo)
+    return next();
 }
 
 
@@ -119,10 +122,11 @@ exports.userUpdate = async (req, res, next) => {
 
     await User.findByIdAndUpdate(userId, req.body)
     res.status(200).send("updated successfully!");
+    return next();
 }
 
 
-exports.userDelete = async (req, res) => {
+exports.userDelete = async (req, res,next) => {
     const { email } = req.query;
     if (email != undefined) {
         const user = await User.findById(req.user._id)
@@ -136,6 +140,7 @@ exports.userDelete = async (req, res) => {
         });
 
         res.status(200).send("account is now delete !");
+        next();
     }
     else {
         return res.status(400).send("please put an email");
@@ -143,7 +148,7 @@ exports.userDelete = async (req, res) => {
 }
 
 //Logout
-exports.userLogOut = async (req, res) => {
+exports.userLogOut = async (req, res,next) => {
     if (req.headers && req.headers.authorization) {
         const token = req.headers.authorization.split(' ')[1];
 
@@ -156,6 +161,7 @@ exports.userLogOut = async (req, res) => {
         await User.findByIdAndUpdate(req.user._id, { tokens: newTokens });
 
         res.status(200).send('Sign out successfully !')
+        return next();
     }
 };
 

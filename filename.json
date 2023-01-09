@@ -1,0 +1,906 @@
+{
+  "swagger": "2.0",
+  "paths": {
+    "/users/register": {
+      "post": {
+        "summary": "/users/register",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pseudo": {
+                  "type": "string",
+                  "example": "test1"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "test1@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "******"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "admin"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pseudo": {
+                  "type": "string",
+                  "example": "test1"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "test1@example.com"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "admin"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "63bc8ba97e2ec15bc38d05fe"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/users/login": {
+      "post": {
+        "summary": "/users/login",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "email": {
+                  "type": "string",
+                  "example": "test1@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "******"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "object",
+                  "properties": {
+                    "pseudo": {
+                      "type": "string",
+                      "example": "test1"
+                    },
+                    "email": {
+                      "type": "string",
+                      "example": "test1@example.com"
+                    }
+                  }
+                },
+                "token": {
+                  "type": "string",
+                  "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2M2JjOGJhOTdlMmVjMTViYzM4ZDA1ZmUiLCJpYXQiOjE2NzMzMDA5MDUsImV4cCI6MTY3MzM4NzMwNX0.VV1uk7159eFsZ5NoqEDmGP5MKBeQk8VFKwXSRRLzu8I"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/users/profil": {
+      "get": {
+        "summary": "/users/profil",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "email",
+            "in": "query",
+            "example": "test1@example.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pseudo": {
+                  "type": "string",
+                  "example": "test1"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "test1@example.com"
+                },
+                "role": {
+                  "type": "string",
+                  "example": "admin"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          },
+          {
+            "authorization": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/users/update": {
+      "put": {
+        "summary": "/users/update",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "pseudo": {
+                  "type": "string",
+                  "example": "test11"
+                },
+                "email": {
+                  "type": "string",
+                  "example": "test1@example.com"
+                },
+                "password": {
+                  "type": "string",
+                  "example": "******"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "updated successfully!"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/users/delete": {
+      "delete": {
+        "summary": "/users/delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "email",
+            "in": "query",
+            "example": "test1@example.com"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "account is now delete !"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Users"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/users/logout": {
+      "post": {
+        "summary": "/users/logout",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {},
+        "tags": [
+          "Users"
+        ]
+      }
+    },
+    "/trains/create": {
+      "post": {
+        "summary": "/trains/create",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "test1"
+                },
+                "start_station": {
+                  "type": "string",
+                  "example": "trainstation1"
+                },
+                "end_station": {
+                  "type": "string",
+                  "example": "trainstation2"
+                },
+                "time_of_departure": {
+                  "type": "string",
+                  "example": "21/01/2023 16:30"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "test1"
+                },
+                "start_station": {
+                  "type": "string",
+                  "example": "trainstation1"
+                },
+                "end_station": {
+                  "type": "string",
+                  "example": "trainstation2"
+                },
+                "time_of_departure": {
+                  "type": "string",
+                  "example": "21/01/2023 16:30"
+                },
+                "_id": {
+                  "type": "string",
+                  "example": "63bc8bab7e2ec15bc38d061c"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Trains"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/trains/read": {
+      "get": {
+        "summary": "/trains/read",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "string"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "start_station": {
+                    "type": "string"
+                  },
+                  "end_station": {
+                    "type": "string"
+                  },
+                  "time_of_departure": {
+                    "type": "string"
+                  },
+                  "__v": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Trains"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/trains/update": {
+      "put": {
+        "summary": "/trains/update",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "test1"
+                },
+                "start_station": {
+                  "type": "string",
+                  "example": "trainstation1"
+                },
+                "end_station": {
+                  "type": "string",
+                  "example": "trainstation2"
+                },
+                "time_of_departure": {
+                  "type": "string",
+                  "example": "22/02/2023 10:30"
+                }
+              }
+            }
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "example": "test1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "updated successfully!"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Trains"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/trains/delete": {
+      "delete": {
+        "summary": "/trains/delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "example": "test1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "Train is now delete !"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Trains"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/trainstations/create": {
+      "post": {
+        "summary": "/trainstations/create",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "trainstation1"
+                },
+                "open_hour": {
+                  "type": "string",
+                  "example": "08:00"
+                },
+                "close_hour": {
+                  "type": "string",
+                  "example": "17:00"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "trainstationInfo": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "trainstation1"
+                    },
+                    "open_hour": {
+                      "type": "string",
+                      "example": "08:00"
+                    },
+                    "close_hour": {
+                      "type": "string",
+                      "example": "17:00"
+                    },
+                    "image": {
+                      "type": "string",
+                      "example": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "TrainStations",
+          "Trains"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/trainstations/update": {
+      "put": {
+        "summary": "/trainstations/update",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "example": "trainstation1"
+                },
+                "open_hour": {
+                  "type": "string",
+                  "example": "09:00"
+                },
+                "close_hour": {
+                  "type": "string",
+                  "example": "17:00"
+                }
+              }
+            }
+          },
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "example": "trainstation1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "updated successfully!"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "TrainStations",
+          "Trains"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/trainstations/read": {
+      "get": {
+        "summary": "/trainstations/read",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "open_hour": {
+                    "type": "string"
+                  },
+                  "close_hour": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "open_hour",
+                  "close_hour",
+                  "image"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "TrainStations",
+          "Trains"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/trainstations/delete": {
+      "delete": {
+        "summary": "/trainstations/delete",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "name",
+            "in": "query",
+            "example": "trainstation1"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "Train station and trains belonging to the station is now delete !"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "TrainStations",
+          "Trains"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/ticket/book": {
+      "post": {
+        "summary": "/ticket/book",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "_id",
+            "in": "query",
+            "example": "63bc8bab7e2ec15bc38d061c"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "string",
+              "example": "Ticket booked !"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Ticket"
+        ],
+        "produces": [
+          "text/html"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    },
+    "/ticket/validate": {
+      "get": {
+        "summary": "/ticket/validate",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "type": "string",
+            "name": "idTrain",
+            "in": "query",
+            "example": "63bc8bab7e2ec15bc38d061c"
+          },
+          {
+            "type": "string",
+            "name": "idUser",
+            "in": "query",
+            "example": "63bc8ba97e2ec15bc38d05fe"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tickerinfo": {
+                  "type": "object",
+                  "properties": {
+                    "userPseudo": {
+                      "type": "string",
+                      "example": "test11"
+                    },
+                    "userEmail": {
+                      "type": "string",
+                      "example": "test1@example.com"
+                    },
+                    "train": {
+                      "type": "string",
+                      "example": "test1"
+                    },
+                    "start_station": {
+                      "type": "string",
+                      "example": "trainstation1"
+                    },
+                    "end_station": {
+                      "type": "string",
+                      "example": "trainstation2"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "tags": [
+          "Ticket"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "authorization": []
+          }
+        ]
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Users"
+    },
+    {
+      "name": "TrainStations"
+    },
+    {
+      "name": "Trains"
+    },
+    {
+      "name": "Ticket"
+    }
+  ],
+  "definitions": {},
+  "info": {
+    "title": "projet",
+    "version": "1.0.0",
+    "license": {
+      "name": "ISC"
+    },
+    "description": "Specification JSONs: [v2](/api-spec/v2), [v3](/api-spec/v3)."
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  },
+  "schemes": [
+    "http"
+  ],
+  "host": "127.0.0.1:64728",
+  "securityDefinitions": {
+    "authorization": {
+      "name": "authorization",
+      "in": "header",
+      "type": "apiKey"
+    }
+  }
+}

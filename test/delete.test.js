@@ -5,7 +5,6 @@ const { API_PORT } = process.env;
 const port = API_PORT;
 
 let request = require('supertest')(`http://localhost:${port}`)
-const expect = require("chai").expect;
 
 let current_token = "";
 let user = {};

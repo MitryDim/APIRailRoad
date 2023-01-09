@@ -13,7 +13,8 @@ exports.isAuth = async (req, res, next) => {
       if (!user) return res.status(401).send('unauthized access !');
       req.user = user;
 
-      next();
+     return next();
+     
     } catch (error) {
       if (error.name === 'JsonWebTokenError') 
         return res.status(401).send('Unauthorized access !');

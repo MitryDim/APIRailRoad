@@ -3,10 +3,12 @@ require('dotenv').config();
 //Importing trainstation context
 const Trainstation = require("../models/trainstationModel");
 const Train = require("../models/trainModel");
+const Ticket = require("../models/ticketModel");
 const DIR = './'
 const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
+
 
 //image check size 
 async function ImageUploading(imgUrl, data) {
@@ -42,7 +44,7 @@ async function ImageUploading(imgUrl, data) {
 }
 
 //Create train station
-exports.createTrainstation = async (req, res) => {
+exports.createTrainstation = async (req, res,next) => {
     const { name, open_hour, close_hour } = req.body;
 
     const isNewTrainstation = await Trainstation.isThisNameInUse(name);
@@ -78,6 +80,7 @@ exports.createTrainstation = async (req, res) => {
 
     //Returns trainstation information avec le status 200 (ok)
     res.status(200).json({ trainstationInfo })
+    return next();
 }
 
 //Update train station
@@ -115,6 +118,7 @@ exports.trainstationUpdate = async (req, res, next) => {
     }
 
     res.status(200).send("updated successfully!");
+    return next();
 }
 
 exports.trainstationFindAll = async (req, res, next) => {
@@ -159,11 +163,12 @@ exports.trainstationFindAll = async (req, res, next) => {
     if (!trainstationInfo || trainstationInfo.length === 0) return res.status(404).send("No trainstations found");
 
     res.status(200).json(trainstationInfo.elements);
+    return next();
 
 }
 
 //methode Delete train station
-exports.trainstationDelete = async (req, res) => {
+exports.trainstationDelete = async (req, res,next) => {
     try {
 
         const { name } = req.query
@@ -179,29 +184,41 @@ exports.trainstationDelete = async (req, res) => {
                 fs.unlinkSync(DIR + trainstationInfo.image);
 
         //suppresion de la station
-        await Trainstation.findOneAndDelete({ name })
-            .then(result => {
-                console.log("Deleted : ", result);
+        await Trainstation.findOneAndDelete({ name }).catch(err => { throw new Error("error when deleting trainstation " + err) });;
+
+
+        //suppression des trains qui comporte la station et les tickets
+
+        Train.find({ start_station: name})
+            .then(async (trains) => {
+                const trainIDs = trains.map((train) => train._id);        
+                return Train.deleteMany({ start_station: name }).then(async (result) => { for (const trainID of trainIDs) { await Ticket.deleteMany({ trainID: trainID }) }});
             })
-            .catch(err => { throw new Error("error when deleting trainstation " + err) });;
+            .then(() => {
+                console.log('Deleted trains');
+            })
+            .catch((error) => {
+                console.error(error);
+            });
 
+        Train.find({ end_station: name })
+            .then(async (trains) => {
+                const trainIDs = trains.map((train) => train._id);
+                return Train.deleteMany({ end_station: name }).then(async (result) => { for (const trainID of trainIDs) { await Ticket.deleteMany({ trainID: trainID }) } });
+            })
+            .then(() => {
+                console.log('Deleted trains');
+            })
+            .catch((error) => {
+                console.error(error);
+            });
 
-        //suppression des trains qui comporte la station
-        await Train.deleteMany({ start_station: req.query.name }), function (err, docs) {
-            if (err) {
-                console.log(err)
-                throw new Error("error when deleting start_station")
-            }
-        };
+       // await Train.deleteMany({ start_station: name }).catch(err => { throw new Error("error when deleting start_station") });
 
-        await Train.deleteMany({ end_station: req.query.name }), function (err, docs) {
-            if (err) {
-                console.log(err)
-                throw new Error("error when deleting end_station")
-            }
-        }
+       // await Train.deleteMany({ end_station: name }).catch(err => { throw new Error("error when deleting end_station") });
 
         res.status(200).send("Train station and trains belonging to the station is now delete !");
+        return next();
 
     } catch (error) {
         res.status(500).send("error when deleting trainstation ");

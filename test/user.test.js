@@ -3,15 +3,12 @@ const mongoose = require('mongoose');
 require('dotenv').config();
 const app = require('../app');
 const expect = require("chai").expect;
-const appPath = process.cwd();
 
 
 var currentResponse={}
 let current_token = "";
 
 let user =  {pseudo: "test1", email:"test1@example.com", password: "tesT1234*", role:"admin"}
-let trainstation_1 = { name: "trainstation1", open_hour: "08:00", close_hour: "17:00", image: `${appPath}\\src\\assets\\uploads\\test.png` }
-let trainstation_2 = { name: "trainstation2", open_hour: "09:00", close_hour: "16:00", image: `${appPath}\\src\\assets\\uploads\\test.png`}
 
 describe('/users', function (){
     //Vérification de la connexion Database

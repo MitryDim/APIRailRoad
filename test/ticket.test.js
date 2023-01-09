@@ -1,6 +1,5 @@
 let request = require('supertest')("http://localhost:4001")
 require('dotenv').config();
-const expect = require("chai").expect;
 
 
 let current_token = "";

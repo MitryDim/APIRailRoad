@@ -53,7 +53,7 @@ npm run dev
 ## Documentations
 
 <ul>
-<li>Swagger documentation  http://domaine:port</li>
+<li>Access Swagger documentation on http://domaine:port/doc</li>
 </ul>
 
 ## Author

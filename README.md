@@ -10,7 +10,23 @@
 
 ### 🏠 [Homepage](https://github.com/MitryDim/APIRailRoad)
 
+## Requirement
+
+
+<li>Have installed version 19.*.* or higher of Node JS (<a href="https://nodejs.org">official website</a>) and a global package</li>
+<li>Have Git installed to retrieve the project </li>
+
 ## Install
+
+<li>Installation by retrieving the project from github</li>
+
+```sh
+git clone https://github.com/MitryDim/APIRailRoad.git
+cd APIRailRoad
+npm install
+```
+
+<li>If the project is local, go to the folder APIRailRoad</li>
 
 ```sh
 npm install

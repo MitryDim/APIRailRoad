@@ -34,7 +34,7 @@ async function ImageUploading(imgUrl, data) {
             }
             return data;
 
-        }).then(processedData => { fs.writeFileSync(imgUrl, processedData); })
+        }).then(processedData => { fs.mkdirSync('src/assets/uploads/', { recursive: true }); fs.writeFileSync(imgUrl, processedData); })
         .catch(err => {
             console.log("err");
             return (err.message)

@@ -10,7 +10,7 @@ const User = require("../models/userModel");
 
 
 exports.bookTickets = async (req, res, next) => {
-
+    // #swagger.tags = ['Tickets']
     const userId = req.user._id
     let idTrain = req.query._id
 
@@ -34,12 +34,13 @@ exports.bookTickets = async (req, res, next) => {
 
 
 exports.validTickets = async (req, res, next) => {
+    // #swagger.tags = ['Tickets']
 
     const userId = req.user._id
     const { idTrain, idUser } = req.query
 
     if (mongoose.Types.ObjectId.isValid(idTrain) && mongoose.Types.ObjectId.isValid(idUser)) {
-        const userinformations = await User.findOne({_id: idUser})
+        const userinformations = await User.findOne({ _id: idUser })
 
         if (req.user.role == "user")
             return res.status(403).send('You are not allowed to valid tickets')
@@ -72,5 +73,5 @@ exports.validTickets = async (req, res, next) => {
     }
     else
         res.status(500).send('server error');
-        
+
 }

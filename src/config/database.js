@@ -1,9 +1,5 @@
 const mongoose = require("mongoose");
-
-
 mongoose.set('strictQuery', false);
-
-
 let URI = "";
 
 const { MONGO_URI } = process.env;

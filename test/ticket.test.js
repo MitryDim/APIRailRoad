@@ -1,10 +1,18 @@
-let request = require('supertest')("http://localhost:4001")
 require('dotenv').config();
 
+//Get port in .env file 
+const { API_PORT } = process.env;
+const port = API_PORT;
+
+//Get Domaine in .env file 
+const { API_DOMAINE } = process.env;
+const domaine = API_DOMAINE || "localhost";
+
+
+const request = require('supertest')(`http://${domaine}:${port}`)
 
 let current_token = "";
 let user = {};
-let trainstation = [];
 let train = {}
 
 

@@ -8,14 +8,14 @@ const User = require("../models/userModel");
 
 //register
 exports.createUser = async (req, res,next) => {
-
-    const { email } = req.body;
+// #swagger.tags = ['Users']
+    const { email, pseudo, password, role } = req.body;
     // check de l'email
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
 
-    const user = await User(req.body, ["pseudo", "email", "password", "role"])
+    const user = await User({pseudo : pseudo, email: email,password: password,role: role})
 
     await user.save();
 
@@ -32,6 +32,7 @@ exports.createUser = async (req, res,next) => {
 
 //Login
 exports.userLogIn = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
@@ -73,11 +74,15 @@ exports.userLogIn = async (req, res,next) => {
 }
 
 exports.userProfil = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     const { email } = req.query
     if (req.user.email != email && !["employee", "admin"].includes(req.user.role))
         return res.status(403).send("you don't have permissions to view this profil")
 
     const user = await User.findOne({ email })
+    if (!user)
+        return res.status(404).send("no account exists with this email!")
+        
 
     const userInfo = {
         pseudo: user.pseudo,
@@ -92,7 +97,8 @@ exports.userProfil = async (req, res,next) => {
 
 //Update
 exports.userUpdate = async (req, res, next) => {
-    const { email, role } = req.body
+    // #swagger.tags = ['Users']
+    const { pseudo,password, email, role } = req.body
 
     let id = req.query._id
     let userId = req.user._id
@@ -120,13 +126,14 @@ exports.userUpdate = async (req, res, next) => {
         if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
 
-    await User.findByIdAndUpdate(userId, req.body)
+    await User.findByIdAndUpdate(userId, {pseudo: pseudo,email: email,password: password,role: role})
     res.status(200).send("updated successfully!");
     return next();
 }
 
 
 exports.userDelete = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     const { email } = req.query;
     if (email != undefined) {
         const user = await User.findById(req.user._id)
@@ -149,6 +156,7 @@ exports.userDelete = async (req, res,next) => {
 
 //Logout
 exports.userLogOut = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     if (req.headers && req.headers.authorization) {
         const token = req.headers.authorization.split(' ')[1];
 

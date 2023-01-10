@@ -12,6 +12,7 @@ const sharp = require('sharp');
 
 //image check size 
 async function ImageUploading(imgUrl, data) {
+    // #swagger.tags = ['Trainstations']
     sharp(data).metadata()
         .then(metadata => {
             if (metadata.width > 200 || metadata.height > 200) {
@@ -45,9 +46,20 @@ async function ImageUploading(imgUrl, data) {
 
 //Create train station
 exports.createTrainstation = async (req, res,next) => {
+    // #swagger.tags = ['Trainstations']
     const { name, open_hour, close_hour } = req.body;
 
     const isNewTrainstation = await Trainstation.isThisNameInUse(name);
+
+    /*
+          #swagger.consumes = ['multipart/form-data']  
+          #swagger.parameters['image'] = {
+              in: 'formData',
+              type: 'file',
+              required: 'false',
+              description: 'image file',
+        } */
+
     if (!isNewTrainstation) return res.status(409).send("Train station already exist. Please Update");
     let imgUrl = "";
 
@@ -85,9 +97,18 @@ exports.createTrainstation = async (req, res,next) => {
 
 //Update train station
 exports.trainstationUpdate = async (req, res, next) => {
-
+    // #swagger.tags = ['Trainstations']
+    /*
+            #swagger.consumes = ['multipart/form-data']  
+            #swagger.parameters['image'] = {
+                in: 'formData',
+                type: 'file',
+                required: 'false',
+                description: 'image file',
+          } */
     const { name } = req.query;
     const newNameOftrainStation = req.body.name;
+    const { open_hour, close_hour } = req.body
 
     const trainstation = await Trainstation.findOne({ name })
 
@@ -100,7 +121,7 @@ exports.trainstationUpdate = async (req, res, next) => {
     }
 
     try {
-        await Trainstation.findOneAndUpdate({ name }, req.body)
+        await Trainstation.findOneAndUpdate({ name }, {name: newNameOftrainStation, open_hour: open_hour, close_hour: close_hour})
 
         if (req.file) {
             const getImageName = `src/assets/uploads/${newNameOftrainStation}${path.extname(req.file.originalname)}`;
@@ -122,11 +143,13 @@ exports.trainstationUpdate = async (req, res, next) => {
 }
 
 exports.trainstationFindAll = async (req, res, next) => {
+    // #swagger.tags = ['Trainstations']
 
     const { sortBy } = req.query;
     let sort = {}
+
     if (sortBy) {
-        const parts = req.query.sortBy.split(";");
+        const parts = sortBy.split(";");
 
         for (let i = 0; i < parts.length; i++) {
             let split_sort = parts[i].split(":");
@@ -144,10 +167,14 @@ exports.trainstationFindAll = async (req, res, next) => {
         const { image } = doc
         let imgUrl = "";
 
+        //Get Domaine in .env file 
+        const { API_DOMAINE } = process.env;
+        const domaine = API_DOMAINE || "localhost";
+
         if (image) {
             let getImageName = image.match(/\/([^\/?#]+)[^\/]*$/);
             if (getImageName)
-                imgUrl = `http://localhost:${process.env.API_PORT}/trainstationsUploads/${getImageName[1]}`;
+                imgUrl = `http://${domaine}:${process.env.API_PORT}/trainstationsUploads/${getImageName[1]}`;
 
         }
 
@@ -169,6 +196,7 @@ exports.trainstationFindAll = async (req, res, next) => {
 
 //methode Delete train station
 exports.trainstationDelete = async (req, res,next) => {
+    // #swagger.tags = ['Trainstations']
     try {
 
         const { name } = req.query
@@ -189,25 +217,19 @@ exports.trainstationDelete = async (req, res,next) => {
 
         //suppression des trains qui comporte la station et les tickets
 
-        Train.find({ start_station: name})
+       await Train.find({ start_station: name})
             .then(async (trains) => {
                 const trainIDs = trains.map((train) => train._id);        
-                return Train.deleteMany({ start_station: name }).then(async (result) => { for (const trainID of trainIDs) { await Ticket.deleteMany({ trainID: trainID }) }});
-            })
-            .then(() => {
-                console.log('Deleted trains');
+                return await Train.deleteMany({ start_station: name }).then(async (result) => { for (const trainID of trainIDs) { await Ticket.deleteMany({ trainID: trainID }) }});
             })
             .catch((error) => {
                 console.error(error);
             });
 
-        Train.find({ end_station: name })
+       await Train.find({ end_station: name })
             .then(async (trains) => {
                 const trainIDs = trains.map((train) => train._id);
-                return Train.deleteMany({ end_station: name }).then(async (result) => { for (const trainID of trainIDs) { await Ticket.deleteMany({ trainID: trainID }) } });
-            })
-            .then(() => {
-                console.log('Deleted trains');
+                return await Train.deleteMany({ end_station: name }).then(async (result) => { for (const trainID of trainIDs) { await Ticket.deleteMany({ trainID: trainID }) } });
             })
             .catch((error) => {
                 console.error(error);

@@ -1,7 +1,11 @@
+//Importing token context
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
+
+//Importing user context
 const User = require('../models/userModel')
 
+//Authentification
 exports.isAuth = async (req, res, next) => {
   /* #swagger.security = [{
               "bearerAuth": []

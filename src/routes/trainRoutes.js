@@ -6,7 +6,6 @@ const {isAuth} = require("../middleware/auth");
 
 const router = express.Router();
 
-
 router.post('/create', isAuth, isAdmin, validateInputCreate, createTrain);
 router.get('/read',trainFindAll)
 router.put('/update',isAuth, isAdmin, validateInputUpdate, trainUpdate);

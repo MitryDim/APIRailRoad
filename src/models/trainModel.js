@@ -6,6 +6,7 @@ const trainSchema = new mongoose.Schema({
     time_of_departure: { type: String, required:true },
 });
 
+//Check if the train name is already used
 trainSchema.statics.isThisNameInUse = async function (name) {
     if (!name) throw new Error('Invalid name');
     try {

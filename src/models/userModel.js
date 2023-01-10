@@ -9,6 +9,7 @@ const userSchema = new mongoose.Schema({
   role: {type:String, required:true, default: "normal"}
 });
 
+//Check password
 userSchema.methods.comparePassword = async function (password) {
 
 
@@ -22,6 +23,7 @@ userSchema.methods.comparePassword = async function (password) {
   }
 };
 
+//Check email
 userSchema.statics.isThisEmailInUse = async function (email) {
   if (!email) throw new Error('Invalid Email');
   try {
@@ -35,7 +37,7 @@ userSchema.statics.isThisEmailInUse = async function (email) {
   }
 };
 
-//Action lors d'un update
+//Action during update
 userSchema.pre('findOneAndUpdate', async function (next) {
   const userToUpdate = await this.model.findOne(this.getQuery())
   if (this._update.password != undefined)
@@ -46,7 +48,7 @@ userSchema.pre('findOneAndUpdate', async function (next) {
   }
 })
 
-//Action lors d'un save
+//Action during save
 userSchema.pre('save', function (next) {
   var user = this;
   bcrypt.hash(user.password, 10, function (err, hash) {

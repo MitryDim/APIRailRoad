@@ -37,8 +37,6 @@ exports.validateInputCreate = (req, res, next) => {
     if (!trainStation.isThisNameInUse(end_station))
         return res.status(400).send("please put an existing end station")
 
-    
-
     next();
 };
 
@@ -59,14 +57,12 @@ exports.validateInputUpdate = (req, res, next) => {
             .max(255)
             .required(),
 
-
         time_of_departure: Joi.string()
                              .regex(/^(\d{2})\/(\d{2})\/(\d{4}) (\d{2}):(\d{2})$/)
     })
     const { error } = schema.validate(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
- 
     next();
 };
 

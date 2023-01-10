@@ -16,6 +16,15 @@
 <li>Have installed version 19.*.* or higher of Node JS (<a href="https://nodejs.org">official website</a>) and a global package</li>
 <li>Have Git installed to retrieve the project </li>
 
+##Configuration
+```text
+NODE_ENV=production
+API_PORT=4001
+MONGO_URI=mongodb+srv://RailRoad:Z24aJQP5FQRQZHVL@clusterprojectrailroad.yei8d4k.mongodb.net/RailRoad
+MONGO_URI_TEST=mongodb+srv://RailRoad:Z24aJQP5FQRQZHVL@clusterprojectrailroad.yei8d4k.mongodb.net/test
+JWT_SECRET_KEY = jwt_secret_key
+```
+
 ## Install
 
 <li>Installation by retrieving the project from github</li>

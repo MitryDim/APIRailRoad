@@ -41,16 +41,7 @@ const doc = {
         }
         // { ... }
     ],
-   // securityDefinitions: {
-        // apiKeyAuth: {
-        //     type: 'apiKey',
-        //     in: 'header', // can be 'header', 'query' or 'cookie'
-        //     name: 'authorization', // name of the header, query parameter or cookie
-        //     description: 'Token for authorization'
-        // }
-//    },  // by default: empty object
- //   definitions: {},          // by default: empty object (Swagger 2.0)
-          // by default: empty object (OpenAPI 3.x)
+
 };
 
 const outputFile = './swagger.json'

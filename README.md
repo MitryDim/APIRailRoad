@@ -44,6 +44,11 @@ npm run start
 npm run test
 ```
 
+## Auto-Generate Swagger documentation
+```sh
+npm run swagger-autogen
+```
+
 ## Run in Dev Mode
 
 ```sh

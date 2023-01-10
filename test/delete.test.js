@@ -4,7 +4,12 @@ require('dotenv').config();
 const { API_PORT } = process.env;
 const port = API_PORT;
 
-let request = require('supertest')(`http://localhost:${port}`)
+//Get Domaine in .env file 
+const { API_DOMAINE } = process.env;
+const domaine = API_DOMAINE || "localhost";
+
+
+const request = require('supertest')(`http://${domaine}:${port}`)
 
 let current_token = "";
 let user = {};

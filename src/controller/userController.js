@@ -3,19 +3,19 @@ const mongoose = require("mongoose")
 
 require('dotenv').config();
 
-//Importing user context
+// importing user context
 const User = require("../models/userModel");
 
-//Register
+//register
 exports.createUser = async (req, res,next) => {
-
-    const { email } = req.body;
-    //Check of email
+// #swagger.tags = ['Users']
+    const { email, pseudo, password, role } = req.body;
+    // check de l'email
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
 
-    const user = await User(req.body, ["pseudo", "email", "password", "role"])
+    const user = await User({pseudo : pseudo, email: email,password: password,role: role})
 
     await user.save();
 
@@ -32,6 +32,7 @@ exports.createUser = async (req, res,next) => {
 
 //Login
 exports.userLogIn = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     const { email, password } = req.body
 
     const user = await User.findOne({ email })
@@ -47,7 +48,7 @@ exports.userLogIn = async (req, res,next) => {
 
     let oldTokens = user.tokens || [];
 
-    //Check expired token (more than 86400 Seconds or 1 day)
+    //vérification token expiré (supérieur à 86400 Secondes soit 1 jour)
     if (oldTokens.length) {
         oldTokens = user.tokens.filter(t => {
             const timeDiff = (Date.now() - parseInt(t.signedAt)) / 1000;
@@ -57,7 +58,7 @@ exports.userLogIn = async (req, res,next) => {
         });
     }
 
-    //Update in BDD
+    //Mise à jour en BDD
     await User.findByIdAndUpdate(user._id, {
         tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
     })
@@ -67,17 +68,21 @@ exports.userLogIn = async (req, res,next) => {
         email: user.email
     }
 
-    //Returns user and token information
+    //retourne les informations user et token
     res.status(200).json({ user: userInfo, token })
     return next();
 }
 
 exports.userProfil = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     const { email } = req.query
     if (req.user.email != email && !["employee", "admin"].includes(req.user.role))
         return res.status(403).send("you don't have permissions to view this profil")
 
     const user = await User.findOne({ email })
+    if (!user)
+        return res.status(404).send("no account exists with this email!")
+        
 
     const userInfo = {
         pseudo: user.pseudo,
@@ -92,12 +97,13 @@ exports.userProfil = async (req, res,next) => {
 
 //Update
 exports.userUpdate = async (req, res, next) => {
-    const { email, role } = req.body
+    // #swagger.tags = ['Users']
+    const { pseudo,password, email, role } = req.body
 
     let id = req.query._id
     let userId = req.user._id
 
-    //Check if ID passed in parameter in the body
+    //verification si ID passé en paramètre dans le body
     if (id != undefined) {
         id = mongoose.Types.ObjectId(id)
 
@@ -107,25 +113,27 @@ exports.userUpdate = async (req, res, next) => {
             userId = id
     }
 
-    //Verification if a role is passed in parameter
+
+    //verification si un rôle est passé en paramètre
     if (role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
 
     const user = await User.findById(userId)
 
-    //check of email
+    //check de l'email
     if (user.email != email) {
         const isNewEmail = await User.isThisEmailInUse(email);
         if (!isNewEmail) return res.status(409).send("email Already Exist.");
     }
 
-    await User.findByIdAndUpdate(userId, req.body)
+    await User.findByIdAndUpdate(userId, {pseudo: pseudo,email: email,password: password,role: role})
     res.status(200).send("updated successfully!");
     return next();
 }
 
-//Delete
+
 exports.userDelete = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     const { email } = req.query;
     if (email != undefined) {
         const user = await User.findById(req.user._id)
@@ -148,6 +156,7 @@ exports.userDelete = async (req, res,next) => {
 
 //Logout
 exports.userLogOut = async (req, res,next) => {
+    // #swagger.tags = ['Users']
     if (req.headers && req.headers.authorization) {
         const token = req.headers.authorization.split(' ')[1];
 

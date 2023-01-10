@@ -1,10 +1,21 @@
-let request = require('supertest')("http://localhost:4001")
 require('dotenv').config();
+
+//Get port in .env file 
+const { API_PORT } = process.env;
+const port = API_PORT;
+
+//Get Domaine in .env file 
+const { API_DOMAINE } = process.env;
+const domaine = API_DOMAINE || "localhost";
+
+
+const request = require('supertest')(`http://${domaine}:${port}`)
 
 let current_token = "";
 let user = {};
-let trainstation = [];
 let train = {}
+
+
 
 describe('/ticket', function () {
 
@@ -15,7 +26,7 @@ describe('/ticket', function () {
         done();
     });
 
-    //Book ticket
+    //book ticket
     it('POST ticket book', async function () {
         await request
             .post('/ticket/book')
@@ -27,7 +38,7 @@ describe('/ticket', function () {
             });
     });
 
-    //Validation ticket book
+    //validation ticket book
     it('POST ticket validate', async function () {
         await request
             .get('/ticket/validate')

@@ -89,7 +89,7 @@ exports.validateInputUpdate = (req,res,next) => {
                  .valid('admin')
                  .optional()
     });
-    const {error} = schema.validate(req.body);
+    const {error} = schema.validate({...req.body, _id: req.query._id});
     if (error) return res.status(400).send(error.details[0].message);  
     
     next();     

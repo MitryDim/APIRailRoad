@@ -67,7 +67,7 @@ describe('/users', function (){
      it('GET User Profile', async () => {
         await request(app)
          .get('/users/profil')
-         .set('authorization', 'Bearer ' + current_token)
+         .set('authorization', "Bearer " + current_token)
          .query({email: user.email})
          .expect(200).catch(error => {
              // renvoyer une erreur personnalisée ici

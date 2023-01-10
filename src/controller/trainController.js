@@ -7,7 +7,8 @@ const Ticket = require('../models/ticketModel')
 
 //Create train
 exports.createTrain = async (req, res,next) => {
-    const { name } = req.body;
+    // #swagger.tags = ['Trains']
+    const { name, start_station, end_station, time_of_departure } = req.body;
     const isNewTrain = await Train.isThisNameInUse(name);
 
     if (!isNewTrain) return res.status(409).send("Train Already Exist. Please Update");
@@ -30,6 +31,7 @@ exports.createTrain = async (req, res,next) => {
 
 //Update train
 exports.trainUpdate = async (req, res, next) => {
+    // #swagger.tags = ['Trains']
     let nameOfTrain = req.query.name;
 
     if (nameOfTrain == undefined)
@@ -42,7 +44,7 @@ exports.trainUpdate = async (req, res, next) => {
     if (train == null)
         return res.status(404).json({ error: "Train Not Found" });
 
-    const { name, start_station, end_station } = req.body;
+    const { name, start_station, end_station, time_of_departure } = req.body;
 
 
     if (train.name != name) {
@@ -61,13 +63,14 @@ exports.trainUpdate = async (req, res, next) => {
     }
 
 
-    await Train.findByIdAndUpdate(train._id, req.body) //findByIdAndUpdate(req.train._id, req.body)
+    await Train.findByIdAndUpdate(train._id, { name:name, start_station:start_station , end_station:end_station  , time_of_departure:time_of_departure }) //findByIdAndUpdate(req.train._id, req.body)
     res.status(200).send("updated successfully!");
     return next();
 }
 
 //Find a train
 exports.trainFindAll = async (req, res,next) => {
+    // #swagger.tags = ['Trains']
     let sort = {};
     let train = {}
 
@@ -170,6 +173,7 @@ exports.trainFindAll = async (req, res,next) => {
 
 //Delete train
 exports.trainDelete = async (req, res,next) => {
+    // #swagger.tags = ['Trains']
 
     const { name } = req.query;
 

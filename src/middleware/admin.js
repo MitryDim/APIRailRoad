@@ -1,6 +1,6 @@
 const User = require('../models/userModel')
 
-
+//Check if user is admin
 exports.isAdmin = async (req, res, next) => {
     if (req.user != undefined) {
         if (req.user.role != "admin")

@@ -1,7 +1,11 @@
+//Importing token context
 const jwt = require("jsonwebtoken");
 require('dotenv').config();
+
+//Importing user context
 const User = require('../models/userModel')
 
+//Authentification
 exports.isAuth = async (req, res, next) => {
   if (req.headers && req.headers.authorization) {
     const token = req.headers.authorization.split(' ')[1]

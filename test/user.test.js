@@ -4,14 +4,13 @@ require('dotenv').config();
 const app = require('../app');
 const expect = require("chai").expect;
 
-
 var currentResponse={}
 let current_token = "";
 
 let user =  {pseudo: "test1", email:"test1@example.com", password: "tesT1234*", role:"admin"}
 
 describe('/users', function (){
-    //Vérification de la connexion Database
+    //Check connexion Database
     this.beforeAll(function (done) {
      mongoose.connection.on('open', done);
 
@@ -58,7 +57,7 @@ describe('/users', function (){
             current_token = currentResponse['token'];
           
           }).catch(error => {
-            // renvoyer une erreur personnalisée ici
+            //Return a custom error here
             throw new Error('Erreur in test user login ' + error.message);
           });
           
@@ -74,7 +73,6 @@ describe('/users', function (){
              // renvoyer une erreur personnalisée ici
              throw new Error('Erreur in test user profile ' + error.message);
            });
-           
      });
 
          //Update information about the user
@@ -107,8 +105,6 @@ describe('/users', function (){
   // });
 
 });
-
-
 
 // describe('/trainstation', function () {
 
@@ -152,11 +148,6 @@ describe('/users', function (){
     //     mongoose.connection.close(done);
     // });
 //});
-
-
-
-
-
 
 
 // it('respond with json', async () => {

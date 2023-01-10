@@ -9,14 +9,13 @@ const fs = require('fs');
 const path = require('path');
 const sharp = require('sharp');
 
-
-//image check size 
+//Image check size
 async function ImageUploading(imgUrl, data) {
     sharp(data).metadata()
         .then(metadata => {
             if (metadata.width > 200 || metadata.height > 200) {
 
-                //conservation des proportions de l'image (évite la déformation)
+                //Preservation of image proportions (avoids deformation)
                 let width = metadata.width;
                 let height = metadata.height;
                 if (width > 200) {
@@ -29,7 +28,7 @@ async function ImageUploading(imgUrl, data) {
                     height = 200;
                     width = Math.round(height * aspectRatio);
                 }
-                // Resize the image
+                //Resize the image
                 return sharp(data).resize(width, height).toBuffer();
             }
             return data;
@@ -39,8 +38,6 @@ async function ImageUploading(imgUrl, data) {
             console.log("err");
             return (err.message)
         });
-
-
 }
 
 //Create train station
@@ -70,7 +67,7 @@ exports.createTrainstation = async (req, res,next) => {
         )
     await trainstation.save();
 
-    //constante avec les informations de la station de train 
+    //Constant with train station information
     const trainstationInfo = {
         name: trainstation.name,
         open_hour: trainstation.open_hour,
@@ -78,7 +75,7 @@ exports.createTrainstation = async (req, res,next) => {
         image: trainstation.image
     }
 
-    //Returns trainstation information avec le status 200 (ok)
+    //Returns trainstation information with status 200 (ok)
     res.status(200).json({ trainstationInfo })
     return next();
 }
@@ -86,6 +83,7 @@ exports.createTrainstation = async (req, res,next) => {
 //Update train station
 exports.trainstationUpdate = async (req, res, next) => {
 
+    //Control of the user's admin role
     const { name } = req.query;
     const newNameOftrainStation = req.body.name;
 
@@ -121,6 +119,7 @@ exports.trainstationUpdate = async (req, res, next) => {
     return next();
 }
 
+//Find a train
 exports.trainstationFindAll = async (req, res, next) => {
 
     const { sortBy } = req.query;
@@ -167,7 +166,7 @@ exports.trainstationFindAll = async (req, res, next) => {
 
 }
 
-//methode Delete train station
+//Methode Delete train station
 exports.trainstationDelete = async (req, res,next) => {
     try {
 
@@ -177,17 +176,17 @@ exports.trainstationDelete = async (req, res,next) => {
         if (!trainstationInfo)
             return res.status(404).send("Train station not found");
 
-        // contrôle si une image a été upload
+        //Check if an image has been uploaded
         if (trainstationInfo.image)
             //vérification si l'image est existante localement si c'est le cas on supprime l'image
             if (fs.existsSync(DIR + trainstationInfo.image))
                 fs.unlinkSync(DIR + trainstationInfo.image);
 
-        //suppresion de la station
+        //Delete trainstation
         await Trainstation.findOneAndDelete({ name }).catch(err => { throw new Error("error when deleting trainstation " + err) });;
 
 
-        //suppression des trains qui comporte la station et les tickets
+        //Delete of the trains that includes the trainstation and tickets
 
         Train.find({ start_station: name})
             .then(async (trains) => {

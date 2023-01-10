@@ -1,7 +1,6 @@
 const Joi = require('joi');
 const PasswordComplexity  = require("joi-password-complexity");
 Joi.objectId = require('joi-objectid')(Joi)
- 
 
 exports.validateInputRegister = (req,res,next) => {
     const schema = Joi.object({ 

@@ -6,6 +6,4 @@ const ticketSchema = new mongoose.Schema({
     book_on: { type: Date, required:true, default: Date.now }
 });
 
-
-
 module.exports = mongoose.model("Tickets",ticketSchema);

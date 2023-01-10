@@ -1,13 +1,10 @@
 let request = require('supertest')("http://localhost:4001")
 require('dotenv').config();
 
-
 let current_token = "";
 let user = {};
 let trainstation = [];
 let train = {}
-
-
 
 describe('/ticket', function () {
 
@@ -18,7 +15,7 @@ describe('/ticket', function () {
         done();
     });
 
-    //book ticket
+    //Book ticket
     it('POST ticket book', async function () {
         await request
             .post('/ticket/book')
@@ -30,7 +27,7 @@ describe('/ticket', function () {
             });
     });
 
-    //validation ticket book
+    //Validation ticket book
     it('POST ticket validate', async function () {
         await request
             .get('/ticket/validate')

@@ -1,8 +1,6 @@
 const mongoose = require("mongoose");
 
-
 mongoose.set('strictQuery', false);
-
 
 let URI = "";
 
@@ -14,8 +12,8 @@ if (process.env.NODE_ENV.trim() !== 'test')
 else
    URI = process.env.MONGO_URI_TEST || MONGO_URI_TEST
 
-
 exports.connect = async () => {
+    //Connecting to the database
   await mongoose
     .connect(URI)
     .then(() => {

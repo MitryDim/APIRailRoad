@@ -2,13 +2,12 @@ require('dotenv').config();
 const { json } = require('express');
 const mongoose = require('mongoose');
 
-
-
+//Importing ticket context
 const Ticket = require("../models/ticketModel");
 const Train = require("../models/trainModel");
 const User = require("../models/userModel");
 
-
+//Booking ticket
 exports.bookTickets = async (req, res, next) => {
 
     const userId = req.user._id
@@ -25,6 +24,7 @@ exports.bookTickets = async (req, res, next) => {
             )
 
         await ticket.save();
+        //Return ticket informations
         res.status(200).send("Ticket booked !");
         return next();
     }
@@ -32,7 +32,7 @@ exports.bookTickets = async (req, res, next) => {
         res.status(500).send('server error');
 }
 
-
+//Validation ticket
 exports.validTickets = async (req, res, next) => {
 
     const userId = req.user._id
@@ -43,7 +43,6 @@ exports.validTickets = async (req, res, next) => {
 
         if (req.user.role == "user")
             return res.status(403).send('You are not allowed to valid tickets')
-
 
         if (!userinformations)
             return res.status(400).send('user not found');

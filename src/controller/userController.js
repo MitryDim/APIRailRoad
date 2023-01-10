@@ -3,14 +3,14 @@ const mongoose = require("mongoose")
 
 require('dotenv').config();
 
-// importing user context
+//Importing user context
 const User = require("../models/userModel");
 
-//register
+//Register
 exports.createUser = async (req, res,next) => {
 
     const { email } = req.body;
-    // check de l'email
+    //Check of email
     const isNewUser = await User.isThisEmailInUse(email);
 
     if (!isNewUser) return res.status(409).send("User Already Exist. Please Login");
@@ -47,7 +47,7 @@ exports.userLogIn = async (req, res,next) => {
 
     let oldTokens = user.tokens || [];
 
-    //vérification token expiré (supérieur à 86400 Secondes soit 1 jour)
+    //Check expired token (more than 86400 Seconds or 1 day)
     if (oldTokens.length) {
         oldTokens = user.tokens.filter(t => {
             const timeDiff = (Date.now() - parseInt(t.signedAt)) / 1000;
@@ -57,7 +57,7 @@ exports.userLogIn = async (req, res,next) => {
         });
     }
 
-    //Mise à jour en BDD
+    //Update in BDD
     await User.findByIdAndUpdate(user._id, {
         tokens: [...oldTokens, { token, signedAt: Date.now().toString() }]
     })
@@ -67,7 +67,7 @@ exports.userLogIn = async (req, res,next) => {
         email: user.email
     }
 
-    //retourne les informations user et token
+    //Returns user and token information
     res.status(200).json({ user: userInfo, token })
     return next();
 }
@@ -97,7 +97,7 @@ exports.userUpdate = async (req, res, next) => {
     let id = req.query._id
     let userId = req.user._id
 
-    //verification si ID passé en paramètre dans le body
+    //Check if ID passed in parameter in the body
     if (id != undefined) {
         id = mongoose.Types.ObjectId(id)
 
@@ -107,14 +107,13 @@ exports.userUpdate = async (req, res, next) => {
             userId = id
     }
 
-
-    //verification si un rôle est passé en paramètre
+    //Verification if a role is passed in parameter
     if (role != undefined && req.user.role != "admin")
         return res.status(403).send("You don't have permissions for update this role.")
 
     const user = await User.findById(userId)
 
-    //check de l'email
+    //check of email
     if (user.email != email) {
         const isNewEmail = await User.isThisEmailInUse(email);
         if (!isNewEmail) return res.status(409).send("email Already Exist.");
@@ -125,7 +124,7 @@ exports.userUpdate = async (req, res, next) => {
     return next();
 }
 
-
+//Delete
 exports.userDelete = async (req, res,next) => {
     const { email } = req.query;
     if (email != undefined) {

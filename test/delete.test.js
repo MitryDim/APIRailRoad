@@ -11,8 +11,7 @@ let user = {};
 let trainstation = [];
 let train = {}
 
-
-
+//Delete train
 describe('Delete train', function () {
 
     before(function (done) {
@@ -33,7 +32,8 @@ describe('Delete train', function () {
     });
 });
 
-describe('Delete train', function () {
+//Delete trainstation
+describe('Delete trainstation', function () {
     before(function (done) {
         trainstation = JSON.parse(process.env.TEST_TRAINSTATION);
         done();
@@ -53,6 +53,7 @@ describe('Delete train', function () {
     });
 });
 
+//Delete user
 describe('Delete user', function () {
     before(function (done) {
         user = JSON.parse(process.env.TEST_USER);

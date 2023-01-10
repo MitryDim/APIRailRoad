@@ -1,7 +1,5 @@
 const Joi = require('joi');
 
-
-
 exports.validateInputCreate = (req, res, next) => {
 
     let newImage = Buffer.alloc(0);

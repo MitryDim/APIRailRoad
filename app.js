@@ -12,7 +12,6 @@ const expressOASGenerator = require('express-oas-generator');
 const userModel= require('./src/models/userModel')
 const _ = require('lodash');
 
-
 expressOASGenerator.handleResponses(app, {
   predefinedSpec: function (spec) {
     _.set(
@@ -51,12 +50,9 @@ expressOASGenerator.handleResponses(app, {
 //   specOutputFileBehavior: SPEC_OUTPUT_FILE_BEHAVIOR.PRESERVE
 // });
 
-
-
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json( { type: 'application/json'}));
 
- 
 app.use("/users", userRoute);
 app.use("/trains", trainRoute);
 app.use("/trainstations", trainstationRoute)
@@ -66,27 +62,17 @@ app.use("/ticket",ticketsRoutes)
 //View image upload
 app.use('/trainstationsUploads', express.static('src/assets/uploads'));
 
-
-
-
 expressOASGenerator.handleRequests();
-
-
 
 //Get port in .env file 
 const { API_PORT } = process.env;
 const port = API_PORT;
 
-// server listening 
-
-
+//Server listening
 const server = app.listen(port, () => {
 
   console.log(`Server running on port ${port}`);
- 
 });
-
-
 
 module.exports = app;
 

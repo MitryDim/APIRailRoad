@@ -7,7 +7,6 @@ let user = {};
 let trainstation = [];
 let train = {}
 
-
 describe('/train', function () {
 
     before(function (done) {
@@ -41,7 +40,7 @@ describe('/train', function () {
             });
     });
 
-    //Create a new train
+    //Update a train
     it('UPDATE train', async function () {
         await request
             .put('/trains/update')
@@ -54,7 +53,7 @@ describe('/train', function () {
             });
     });
 
-    //read all trains
+    //Read all trains
     it('GET trains', async function () {
         await request
             .get('/trains/read')

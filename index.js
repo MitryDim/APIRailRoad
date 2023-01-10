@@ -4,8 +4,7 @@ const app = require("./app");
 const { API_PORT } = process.env;
 const port = API_PORT;
 
-// server listening 
-
+//Server listening
 const server = app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

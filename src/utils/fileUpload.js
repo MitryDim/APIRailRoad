@@ -2,12 +2,14 @@ const multer = require('multer');
 const path = require('path');
 const storage = multer.memoryStorage()
 
-
+//Control image size when uploading
 const fileUpload = () => multer({
     storage: storage,
     limits: {
         fileSize: 1024 * 1024 * 10, // 10mb
     },
+
+    //Check image extension
     fileFilter: (req, file, cb) => {
         if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype == "image/jpeg") {
 
@@ -23,6 +25,5 @@ const fileUpload = () => multer({
         return new Error(err);
     }
 }).single('image');
-
 
 module.exports = fileUpload;

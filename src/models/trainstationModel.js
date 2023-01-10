@@ -7,6 +7,7 @@ const trainstationSchema = new mongoose.Schema({
     image:  {type: String,required: false,}
 });
 
+//Check trainstation name
 trainstationSchema.statics.isThisNameInUse = async function (name) {
     if (!name) throw new Error('Invalid name');
     try {

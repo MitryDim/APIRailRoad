@@ -66,13 +66,10 @@ exports.trainUpdate = async (req, res, next) => {
     return next();
 }
 
-
+//Find a train
 exports.trainFindAll = async (req, res,next) => {
     let sort = {};
     let train = {}
-
-
-
 
     // train = await Train.find({})
     const { station_name, type, sortBy, filter } = req.query;
@@ -80,7 +77,6 @@ exports.trainFindAll = async (req, res,next) => {
     let limit = req.query.limit || 10;
 
     let skip = req.query.skip || 0;
-
 
     if (sortBy) {
         const parts = req.query.sortBy.split(";");
@@ -100,8 +96,6 @@ exports.trainFindAll = async (req, res,next) => {
             break;
         default:
             train = await Train.find().limit(limit).skip(skip).sort(sort)
-
-
             break;
     }
 
@@ -172,11 +166,9 @@ exports.trainFindAll = async (req, res,next) => {
 
     res.status(200).json(train);
     return next();
-
 }
 
-
-
+//Delete train
 exports.trainDelete = async (req, res,next) => {
 
     const { name } = req.query;
@@ -199,9 +191,4 @@ exports.trainDelete = async (req, res,next) => {
         res.status(500).send("Error when deleting train");
 
     }
-
-
-
-
-
 }

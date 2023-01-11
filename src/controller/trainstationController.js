@@ -130,7 +130,7 @@ exports.trainstationUpdate = async (req, res, next) => {
 
             ImageUploading(getImageName, data)
 
-            await Trainstation.findOneAndUpdate({ newNameOftrainStation }, { image: getImageName[1] })
+            await Trainstation.findOneAndUpdate({name: newNameOftrainStation}, { image: getImageName })
         }
         await Train.updateMany({ start_station: name }, { start_station: newNameOftrainStation })
         await Train.updateMany({ end_station: name }, { end_station: newNameOftrainStation })

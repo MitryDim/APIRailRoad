@@ -183,7 +183,7 @@ exports.trainDelete = async (req, res,next) => {
     // const id = mongoose.Types.ObjectId(_id);
     try {
         await Train.findOneAndDelete({ name }).then( async (result) => {
-            await Ticket.findOneAndDelete({ trainId: result._id })
+            await Ticket.findOneAndDelete({ trainID: result._id })
 })
             .catch(err => { throw new Error("error when deleting trainstation " + err) });;
 
